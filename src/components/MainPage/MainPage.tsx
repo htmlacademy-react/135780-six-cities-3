@@ -2,7 +2,11 @@ import React from 'react';
 import OfferCard from '../OfferCard/OfferCard';
 import { offers } from '../../constants';
 
-const MainPage: React.FC = () => (
+type MainPageProps = {
+  offersCount: number;
+};
+
+const MainPage: React.FC<MainPageProps> = ({ offersCount }) => (
   <div className="page page--gray page--main">
     <header className="header">
       <div className="container">
@@ -73,11 +77,11 @@ const MainPage: React.FC = () => (
         <div className="cities__places-container container">
           <section className="cities__places places">
             <h2 className="visually-hidden">Places</h2>
-            <b className="places__found">312 places to stay in Amsterdam</b>
+            <b className="places__found">{offersCount} places to stay in Amsterdam</b>
             <form className="places__sorting" action="#" method="get">
               <span className="places__sorting-caption">Sort by</span>
               <span className="places__sorting-type" tabIndex={0}>
-                  Popular
+                Popular
                 <svg className="places__sorting-arrow" width="7" height="4">
                   <use xlinkHref="#icon-arrow-select"></use>
                 </svg>

@@ -11,3 +11,7 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+//root.render(
+//  React.createElement(App)
+//);
