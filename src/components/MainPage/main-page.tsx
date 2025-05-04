@@ -1,18 +1,25 @@
 import React from 'react';
-import OfferCard from '../OfferCard/OfferCard';
-import { offers } from '../../constants';
+import OfferCard from '../OfferCard/offer-card';
 
 type MainPageProps = {
-  offersCount: number;
+  offers: Array<{
+    id: number;
+    isPremium: boolean;
+    price: number;
+    title: string;
+    type: string;
+    rating: number;
+    image: string;
+  }>;
 };
 
-const MainPage: React.FC<MainPageProps> = ({ offersCount }) => (
+const MainPage: React.FC<MainPageProps> = ({ offers }) => (
   <div className="page page--gray page--main">
     <header className="header">
       <div className="container">
         <div className="header__wrapper">
           <div className="header__left">
-            <a className="header__logo-link header__logo-link--active" href="#">
+            <a className="header__logo-link header__logo-link--active" href="/">
               <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
             </a>
           </div>
@@ -77,7 +84,7 @@ const MainPage: React.FC<MainPageProps> = ({ offersCount }) => (
         <div className="cities__places-container container">
           <section className="cities__places places">
             <h2 className="visually-hidden">Places</h2>
-            <b className="places__found">{offersCount} places to stay in Amsterdam</b>
+            <b className="places__found">{offers.length} places to stay in Amsterdam</b>
             <form className="places__sorting" action="#" method="get">
               <span className="places__sorting-caption">Sort by</span>
               <span className="places__sorting-type" tabIndex={0}>
