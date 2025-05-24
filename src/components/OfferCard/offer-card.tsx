@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-type OfferCardProps = {
+type Offer = {
+  id: number;
   isPremium: boolean;
   price: number;
   title: string;
@@ -9,20 +11,26 @@ type OfferCardProps = {
   image: string;
 };
 
-const OfferCard: React.FC<OfferCardProps> = ({ isPremium, price, title, type, rating, image }) => {
+type OfferCardProps = {
+  offer: Offer;
+  isActive?: boolean;
+};
+
+const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive }) => {
+  const { id, isPremium, price, title, type, rating, image } = offer;
   const ratingPercentage = `${Math.round(rating) * 20}%`;
 
   return (
-    <article className="cities__card place-card">
+    <article className={`cities__card place-card${isActive ? ' place-card--active' : ''}`}>
       {isPremium && (
         <div className="place-card__mark">
           <span>Premium</span>
         </div>
       )}
       <div className="cities__image-wrapper place-card__image-wrapper">
-        <a href="#">
+        <Link to={`/offer/${id}`}>
           <img className="place-card__image" src={image} width="260" height="200" alt="Place image" />
-        </a>
+        </Link>
       </div>
       <div className="place-card__info">
         <div className="place-card__price-wrapper">
@@ -44,7 +52,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ isPremium, price, title, type, ra
           </div>
         </div>
         <h2 className="place-card__name">
-          <a href="#">{title}</a>
+          <Link to={`/offer/${id}`}>{title}</Link>
         </h2>
         <p className="place-card__type">{type}</p>
       </div>

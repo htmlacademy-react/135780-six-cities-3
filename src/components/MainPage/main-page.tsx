@@ -1,5 +1,6 @@
 import React from 'react';
-import OfferCard from '../OfferCard/offer-card';
+import OfferList from '../OfferList/offer-list';
+import { Link } from 'react-router-dom';
 
 type MainPageProps = {
   offers: Array<{
@@ -19,9 +20,9 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => (
       <div className="container">
         <div className="header__wrapper">
           <div className="header__left">
-            <a className="header__logo-link header__logo-link--active" href="/">
+            <Link className="header__logo-link header__logo-link--active" to="/">
               <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
-            </a>
+            </Link>
           </div>
           <nav className="header__nav">
             <ul className="header__nav-list">
@@ -100,19 +101,7 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => (
                 <li className="places__option" tabIndex={0}>Top rated first</li>
               </ul>
             </form>
-            <div className="cities__places-list places__list tabs__content">
-              {offers.map((offer) => (
-                <OfferCard
-                  key={offer.id}
-                  isPremium={offer.isPremium}
-                  price={offer.price}
-                  title={offer.title}
-                  type={offer.type}
-                  rating={offer.rating}
-                  image={offer.image}
-                />
-              ))}
-            </div>
+            <OfferList offers={offers} />
           </section>
           <div className="cities__right-section">
             <section className="cities__map map"></section>
