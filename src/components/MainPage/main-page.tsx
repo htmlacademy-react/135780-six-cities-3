@@ -110,7 +110,9 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => (
             <OfferList offers={offers} />
           </section>
           <div className="cities__right-section">
+
             <Map offers={offers} />
+
           </div>
         </div>
       </div>
