@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, generatePath } from 'react-router-dom';
+import { AppRoutes } from '../../constants';
 
 type Offer = {
   id: number;
@@ -17,8 +18,9 @@ type OfferCardProps = {
 };
 
 const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive }) => {
-  const { id, isPremium, price, title, type, rating, image } = offer;
+  const { isPremium, price, title, type, rating, image } = offer;
   const ratingPercentage = `${Math.round(rating) * 20}%`;
+  const detailUrl = generatePath(AppRoutes.Offer, { offerId: offer.id.toString() });
 
   return (
     <article className={`cities__card place-card${isActive ? ' place-card--active' : ''}`}>
@@ -28,7 +30,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive }) => {
         </div>
       )}
       <div className="cities__image-wrapper place-card__image-wrapper">
-        <Link to={`/offer/${id}`}>
+        <Link to={detailUrl}>
           <img className="place-card__image" src={image} width="260" height="200" alt="Place image" />
         </Link>
       </div>
@@ -52,7 +54,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive }) => {
           </div>
         </div>
         <h2 className="place-card__name">
-          <Link to={`/offer/${id}`}>{title}</Link>
+          <Link to={detailUrl}>{title}</Link>
         </h2>
         <p className="place-card__type">{type}</p>
       </div>

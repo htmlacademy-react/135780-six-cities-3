@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { AppRoutes } from '../constants';
 
 const LoginPage: React.FC = () => (
   <div className="page page--gray page--login">
@@ -7,7 +8,7 @@ const LoginPage: React.FC = () => (
       <div className="container">
         <div className="header__wrapper">
           <div className="header__left">
-            <Link className="header__logo-link header__logo-link--active" to="/">
+            <Link className="header__logo-link header__logo-link--active" to={AppRoutes.Root}>
               <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
             </Link>
           </div>
@@ -33,9 +34,9 @@ const LoginPage: React.FC = () => (
         </section>
         <section className="locations locations--login locations--current">
           <div className="locations__item">
-            <a className="locations__item-link" href="#">
+            <Link className="locations__item-link" to={AppRoutes.Login}>
               <span>Amsterdam</span>
-            </a>
+            </Link>
           </div>
         </section>
       </div>

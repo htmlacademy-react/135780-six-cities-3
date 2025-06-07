@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import CommentForm from '../CommentForm/comment-form';
-import ReviewList, { ReviewData } from '../Review/review-list';
-import Map from '../map/map';
-import NearOffersList from '../NearOffersList/near-offer-list';
+import CommentForm from '../components/CommentForm/comment-form';
+import ReviewList, { ReviewData } from '../components/Review/review-list';
+import Map from '../components/map/map';
+import NearOffersList from '../components/NearOffersList/near-offer-list';
 
 const dummyReviews: ReviewData[] = [
   {
