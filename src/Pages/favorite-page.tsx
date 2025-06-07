@@ -1,20 +1,10 @@
 import React from 'react';
-import OfferList from '../components/OfferList/offer-list';
+import OfferList, { OfferData } from '../components/OfferList/offer-list';
 import { Link } from 'react-router-dom';
 import { AppRoutes } from '../constants';
 
-type Offer = {
-  id: number;
-  isPremium: boolean;
-  price: number;
-  title: string;
-  type: string;
-  rating: number;
-  image: string;
-};
-
 type FavoritesPageProps = {
-  offers: Offer[];
+  offers: OfferData[];
 };
 
 const FavoritesPage: React.FC<FavoritesPageProps> = ({ offers }) => (
@@ -24,7 +14,13 @@ const FavoritesPage: React.FC<FavoritesPageProps> = ({ offers }) => (
         <div className="header__wrapper">
           <div className="header__left">
             <Link className="header__logo-link header__logo-link--active" to={AppRoutes.Root}>
-              <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
+              <img
+                className="header__logo"
+                src="img/logo.svg"
+                alt="6 cities logo"
+                width="81"
+                height="41"
+              />
             </Link>
           </div>
           <nav className="header__nav">

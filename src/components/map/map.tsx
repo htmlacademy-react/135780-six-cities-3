@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import useMap from '../../hooks/useMap';
 
 type Location = {
   latitude: number;
@@ -9,15 +10,16 @@ type Location = {
 };
 
 type Offer = {
-  id: number;
+  id: string;
   location: Location;
 };
 
-type MapProps = {
+export type MapProps = {
   offers: Offer[];
+  activeOfferId?: string | null;
 };
 
-const defaultCity = {
+const defaultCity: Location = {
   latitude: 52.3909553943508,
   longitude: 4.85309666406198,
   zoom: 12,
@@ -29,39 +31,37 @@ const markerIcon = L.icon({
   iconAnchor: [15, 30],
 });
 
-export default function Map({ offers }: MapProps) {
+const activeMarkerIcon = L.icon({
+  iconUrl: 'img/pin-active.svg',
+  iconSize: [30, 30],
+  iconAnchor: [15, 30],
+});
+
+export default function Map({ offers, activeOfferId }: MapProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<L.Map | null>(null);
+  const mapInstance = useMap(mapRef, { location: defaultCity, zoom: defaultCity.zoom });
 
   useEffect(() => {
-    if (mapRef.current && !mapInstance.current) {
-      mapInstance.current = L.map(mapRef.current, {
-        center: [defaultCity.latitude, defaultCity.longitude],
-        zoom: defaultCity.zoom,
-      });
-
-      L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-      }).addTo(mapInstance.current);
+    if (!mapInstance) {
+      return;
     }
 
-    // Удаляем старые маркеры
-    mapInstance.current?.eachLayer((layer) => {
+    // Удаляем только маркеры (оставляем базовый слой)
+    mapInstance.eachLayer((layer) => {
       if (layer instanceof L.Marker) {
-        mapInstance.current?.removeLayer(layer);
+        mapInstance.removeLayer(layer);
       }
     });
 
-    // Добавляем новые маркеры
+    // Добавляем маркеры с условной подсветкой
     offers.forEach((offer) => {
+      const isActive = offer.id.toString() === activeOfferId?.toString();
       L.marker(
         [offer.location.latitude, offer.location.longitude],
-        { icon: markerIcon }
-      ).addTo(mapInstance.current!);
+        { icon: isActive ? activeMarkerIcon : markerIcon }
+      ).addTo(mapInstance);
     });
-
-    // eslint-disable-next-line
-  }, [offers]);
+  }, [offers, mapInstance, activeOfferId]);
 
   return (
     <section className="cities__map map" ref={mapRef} style={{ height: 850 }} />

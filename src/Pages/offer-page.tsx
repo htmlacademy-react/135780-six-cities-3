@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CommentForm from '../components/CommentForm/comment-form';
 import ReviewList, { ReviewData } from '../components/Review/review-list';
 import Map from '../components/map/map';
-import NearOffersList from '../components/NearOffersList/near-offer-list';
+import OfferList from '../components/OfferList/offer-list';
 
 const dummyReviews: ReviewData[] = [
   {
@@ -24,10 +24,10 @@ const dummyReviews: ReviewData[] = [
   },
 ];
 
-// Тестовые данные для объявлений неподалёку
+// Тестовые данные для объявлений неподалёку. Обратите внимание, id приведены к строке.
 const nearOffers = [
   {
-    id: 101,
+    id: '101',
     isPremium: false,
     price: 120,
     title: 'Уютная квартира неподалёку 1',
@@ -35,10 +35,9 @@ const nearOffers = [
     rating: 4.5,
     image: 'img/apartment-01.jpg',
     location: { latitude: 52.3909553943508, longitude: 4.85309666406198, zoom: 8 },
-
   },
   {
-    id: 102,
+    id: '102',
     isPremium: true,
     price: 180,
     title: 'Стильный лофт неподалёку',
@@ -48,7 +47,7 @@ const nearOffers = [
     location: { latitude: 52.369553943508, longitude: 4.85309666406198, zoom: 8 },
   },
   {
-    id: 103,
+    id: '103',
     isPremium: false,
     price: 90,
     title: 'Комната неподалёку',
@@ -61,6 +60,8 @@ const nearOffers = [
 
 const OfferPage: React.FC = () => {
   const { id } = useParams();
+  // Поднимаем состояние для активного предложения. Тип приводим к строке.
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
 
   return (
     <div className="page">
@@ -84,16 +85,14 @@ const OfferPage: React.FC = () => {
           </div>
           {/* Блок с картой, где отображаются объявления неподалёку */}
           <section className="offer__map-container container">
-
-            <Map offers={nearOffers} />
-
+            <Map offers={nearOffers} activeOfferId={activeOfferId} />
           </section>
         </section>
         {/* Новый блок «Other places in the neighbourhood» */}
         <div className="container">
           <section className="near-places places">
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
-            <NearOffersList offers={nearOffers} />
+            <OfferList offers={nearOffers} onCardHover={setActiveOfferId} className="cities__places-list" />
           </section>
         </div>
       </main>
