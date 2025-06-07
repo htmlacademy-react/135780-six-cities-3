@@ -2,7 +2,7 @@ import React from 'react';
 import Review from './review';
 
 export type ReviewData = {
-  id: number;
+  id: string;
   avatar: string;
   username: string;
   rating: number;

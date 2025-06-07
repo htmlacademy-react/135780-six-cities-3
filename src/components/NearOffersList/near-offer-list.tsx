@@ -1,28 +1,19 @@
 import React from 'react';
 import OfferCard from '../OfferCard/offer-card';
+import { OfferData } from '../OfferList/offer-list';
 
-type Offer = {
-  id: number;
-  isPremium: boolean;
-  price: number;
-  title: string;
-  type: string;
-  rating: number;
-  image: string;
+type NearOfferListProps = {
+  offers: OfferData[];
+  onCardHover?: (id: string | null) => void;
+  className?: string;
 };
 
-type NearOffersListProps = {
-  offers: Offer[];
-};
-
-const NearOffersList: React.FC<NearOffersListProps> = ({ offers }) => (
-  <div className="near-places__list places__list">
+const NearOfferList: React.FC<NearOfferListProps> = ({ offers, onCardHover, className }) => (
+  <div className={`near-offers-list ${className || ''}`}>
     {offers.map((offer) => (
-      <div key={offer.id}>
-        <OfferCard offer={offer} />
-      </div>
+      <OfferCard key={offer.id} offer={offer} onHover={onCardHover || (() => {})} />
     ))}
   </div>
 );
 
-export default NearOffersList;
+export default NearOfferList;

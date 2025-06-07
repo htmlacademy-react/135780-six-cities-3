@@ -7,7 +7,7 @@ import OfferList from '../components/OfferList/offer-list';
 
 const dummyReviews: ReviewData[] = [
   {
-    id: 1,
+    id: '1',
     avatar: 'img/avatar-max.jpg',
     username: 'Max',
     rating: 4.8,
@@ -15,7 +15,7 @@ const dummyReviews: ReviewData[] = [
     date: '2019-04-24',
   },
   {
-    id: 2,
+    id: '2',
     avatar: 'img/avatar-angelina.jpg',
     username: 'Angelina',
     rating: 5,
@@ -24,7 +24,7 @@ const dummyReviews: ReviewData[] = [
   },
 ];
 
-// Тестовые данные для объявлений неподалёку. Обратите внимание, id приведены к строке.
+// Тестовые данные для объявлений неподалёку.
 const nearOffers = [
   {
     id: '101',
