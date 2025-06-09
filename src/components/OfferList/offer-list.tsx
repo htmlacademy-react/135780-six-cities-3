@@ -9,6 +9,7 @@ export type OfferData = {
   type: string;
   rating: number;
   image: string;
+  city: string;
   location: {
     latitude: number;
     longitude: number;

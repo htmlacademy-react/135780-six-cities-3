@@ -9,6 +9,7 @@ import PrivateRoute from './components/PrivateRoute/private-route';
 import { AppRoutes } from './constants';
 import { offers as mockOffers } from './mocks/offers';
 
+
 type AppProps = {
   offers: typeof mockOffers;
 };
@@ -23,7 +24,7 @@ const App: React.FC<AppProps> = ({ offers }) => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={AppRoutes.Root} element={<MainPage offers={stringOffers} />} />
+        <Route path={AppRoutes.Root} element={<MainPage/>} />
         <Route path={AppRoutes.Login} element={<LoginPage />} />
         <Route
           path={AppRoutes.Favorites}
