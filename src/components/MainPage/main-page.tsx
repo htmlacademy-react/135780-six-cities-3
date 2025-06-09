@@ -1,6 +1,7 @@
 import React from 'react';
 import OfferList from '../OfferList/offer-list';
 import { Link } from 'react-router-dom';
+import Map from '../map/map';
 
 type MainPageProps = {
   offers: Array<{
@@ -11,6 +12,11 @@ type MainPageProps = {
     type: string;
     rating: number;
     image: string;
+    location: {
+      latitude: number;
+      longitude: number;
+      zoom: number;
+    };
   }>;
 };
 
@@ -104,7 +110,7 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => (
             <OfferList offers={offers} />
           </section>
           <div className="cities__right-section">
-            <section className="cities__map map"></section>
+            <Map offers={offers} />
           </div>
         </div>
       </div>

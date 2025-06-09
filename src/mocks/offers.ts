@@ -36,8 +36,8 @@ export const offers = [
       avatarUrl: 'img/avatar-max.jpg',
       isPro: false,
     },
-    city: 'Hamburg',
-    location: { latitude: 53.550341, longitude: 10.000654, zoom: 8 },
+    city: 'Amsterdam',
+    location: { latitude: 52.3609553943508, longitude: 4.85309666406198, zoom: 8 },
   },
   {
     id: 3,
@@ -56,8 +56,8 @@ export const offers = [
       avatarUrl: 'img/avatar-louise.jpg',
       isPro: true,
     },
-    city: 'Cologne',
-    location: { latitude: 50.937531, longitude: 6.960279, zoom: 8 },
+    city: 'Amsterdam',
+    location: { latitude: 52.3909553943508, longitude: 4.929309666406198, zoom: 8 },
   },
   {
     id: 4,
@@ -76,7 +76,7 @@ export const offers = [
       avatarUrl: 'img/avatar-peter.jpg',
       isPro: false,
     },
-    city: 'Brussels',
-    location: { latitude: 50.85045, longitude: 4.34878, zoom: 8 },
+    city: 'Amsterdam',
+    location: { latitude: 52.3809553943508, longitude: 4.939309666406198, zoom: 8 },
   },
 ];
