@@ -10,7 +10,9 @@ type Location = {
   zoom: number;
 };
 
-type Offer = OfferData;
+type Offer = OfferData & {
+  location: Location;
+};
 
 export type MapProps = {
   offers: Offer[];

@@ -14,11 +14,7 @@ export type OfferData = {
       zoom: number;
     };
   };
-  location: {
-    latitude: number;
-    longitude: number;
-    zoom: number;
-  };
+
   isFavorite: boolean;
   isPremium: boolean;
   rating: number;
@@ -34,7 +30,7 @@ type OfferListProps = {
 const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className }) => (
   <div className={`offer-list ${className || ''}`}>
     {offers.map((offer) => (
-      <OfferCard key={offer.id} offer={{ ...offer, image: offer.previewImage }} onHover={onCardHover || (() => {})}/>
+      <OfferCard key={offer.id} offer={offer} onHover={onCardHover || (() => {})}/>
     ))}
   </div>
 );

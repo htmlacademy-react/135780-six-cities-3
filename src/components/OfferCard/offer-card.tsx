@@ -9,7 +9,6 @@ type Offer = {
   title: string;
   type: string;
   rating: number;
-  image: string;
   previewImage: string;
 };
 
