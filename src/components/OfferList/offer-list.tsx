@@ -2,19 +2,27 @@ import React from 'react';
 import OfferCard from '../OfferCard/offer-card';
 
 export type OfferData = {
-  id: string;
-  isPremium: boolean;
-  price: number;
+   id: string;
   title: string;
   type: string;
-  rating: number;
-  image: string;
-  city: string;
+  price: number;
+  city: {
+    name: string;
+    location: {
+      latitude: number;
+      longitude: number;
+      zoom: number;
+    };
+  };
   location: {
     latitude: number;
     longitude: number;
     zoom: number;
   };
+  isFavorite: boolean;
+  isPremium: boolean;
+  rating: number;
+  previewImage: string;
 };
 
 type OfferListProps = {
@@ -26,7 +34,7 @@ type OfferListProps = {
 const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className }) => (
   <div className={`offer-list ${className || ''}`}>
     {offers.map((offer) => (
-      <OfferCard key={offer.id} offer={offer} onHover={onCardHover || (() => {})} />
+      <OfferCard key={offer.id} offer={{ ...offer, image: offer.previewImage }} onHover={onCardHover || (() => {})}/>
     ))}
   </div>
 );

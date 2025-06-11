@@ -10,6 +10,7 @@ type Offer = {
   type: string;
   rating: number;
   image: string;
+  previewImage: string;
 };
 
 type OfferCardProps = {
@@ -19,7 +20,7 @@ type OfferCardProps = {
 };
 
 const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover }) => {
-  const { isPremium, price, title, type, rating, image } = offer;
+  const { isPremium, price, title, type, rating } = offer;
   const ratingPercentage = `${Math.round(rating) * 20}%`;
   const detailUrl = generatePath(AppRoutes.Offer, { offerId: offer.id.toString() });
 
@@ -38,7 +39,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover }) => {
         <Link to={detailUrl}>
           <img
             className="place-card__image"
-            src={image}
+            src={offer.previewImage}
             width="260"
             height="200"
             alt="Place image"
