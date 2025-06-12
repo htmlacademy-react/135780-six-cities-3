@@ -4,6 +4,7 @@ import { OfferData } from '../components/OfferList/offer-list';
 export const SET_CITY = 'SET_CITY';
 export const SET_OFFERS = 'SET_OFFERS';
 export const SET_AUTHORIZATION_STATUS = 'SET_AUTHORIZATION_STATUS';
+export const SET_USER = 'SET_USER';
 
 // Экшены
 export type SetCityAction = {
@@ -22,13 +23,20 @@ export type SetAuthorizationStatusAction = {
 };
 
 export type User = {
-  id: number;
-  name: string;
+   name: string;
+  avatarUrl: string;
+  isPro: boolean;
   email: string;
+  token: string;
+};
+
+export type SetUserAction = {
+  type: typeof SET_USER;
+  payload: User | null;
 };
 
 // Объединённый тип всех экшенов
-export type Actions = SetCityAction | SetOffersAction | SetAuthorizationStatusAction;
+export type Actions = SetCityAction | SetOffersAction | SetAuthorizationStatusAction | SetUserAction;
 
 
 export const setCity = (city: string): SetCityAction => ({
@@ -48,11 +56,6 @@ export const setAuthorizationStatus = (
   payload: status,
 });
 
-
-export type SetUserAction = {
-  type: 'SET_USER';
-  payload: User | null;
-};
 
 export const setUser = (user: User | null): SetUserAction => ({
   type: 'SET_USER',

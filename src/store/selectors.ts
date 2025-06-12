@@ -8,4 +8,4 @@ export const selectOffersByCity = (state: RootState) => state.offers.filter((off
 export const selectOffersLoading = (state: RootState) => state.offersLoading;
 export const selectOffersError = (state: RootState) => state.offersError;
 export const selectAuthorizationStatus = (state: RootState) => state.authorizationStatus;
-export const selectUser = (state: RootState) => state.user; // если user хранится в state
+export const selectUser = (state: RootState) => state.user;

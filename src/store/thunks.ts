@@ -1,9 +1,17 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { OfferData } from '../components/OfferList/offer-list';
 import { RootState, AppThunkExtra } from './index';
-import { setAuthorizationStatus } from './action';
+import { setAuthorizationStatus, setUser } from './action';
 
 type UserResponse = {
+  name: string;
+  avatarUrl: string;
+  isPro: boolean;
+  email: string;
+  token: string;
+};
+
+type AuthInfo = {
   name: string;
   avatarUrl: string;
   isPro: boolean;
@@ -19,14 +27,12 @@ export const checkAuth = createAsyncThunk<
   'user/checkAuth',
   async (_arg, { extra: api, dispatch }) => {
     try {
-      await api.get<UserResponse>('/login');
-      // Если успешно — авторизован
+      const { data } = await api.get<UserResponse>('/login');
       dispatch(setAuthorizationStatus('AUTH'));
-      // Можно сохранить токен, если нужно:
-      // localStorage.setItem('six-cities-token', data.token);
+      dispatch(setUser(data));
     } catch (error) {
-      // Если ошибка — не авторизован
       dispatch(setAuthorizationStatus('NO_AUTH'));
+      dispatch(setUser(null));
     }
   }
 );
@@ -43,6 +49,26 @@ export const fetchOffers = createAsyncThunk<
       return data;
     } catch (error) {
       return rejectWithValue('Не удалось загрузить предложения. Попробуйте позже.');
+    }
+  }
+);
+
+export const login = createAsyncThunk<
+  void,
+  { email: string; password: string },
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'user/login',
+  async ({ email, password }, { extra: api, dispatch }) => {
+    try {
+      const { data } = await api.post<AuthInfo>('/login', { email, password });
+      localStorage.setItem('six-cities-token', data.token);
+      dispatch(setAuthorizationStatus('AUTH'));
+      dispatch(setUser(data));
+    } catch (error) {
+      dispatch(setAuthorizationStatus('NO_AUTH'));
+      dispatch(setUser(null));
+      throw error;
     }
   }
 );

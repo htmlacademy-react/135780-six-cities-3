@@ -21,7 +21,7 @@ const MainPage: React.FC = () => {
   const [sortType, setSortType] = React.useState<SortType>('Popular');
   const cities = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
   const authorizationStatus = useSelector(selectAuthorizationStatus);
-  const user = useSelector(selectUser) as { avatarUrl: string; email: string } | null;
+  const user = useSelector(selectUser);
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault();
     localStorage.removeItem('six-cities-token');
