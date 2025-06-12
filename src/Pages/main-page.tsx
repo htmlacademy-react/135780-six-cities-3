@@ -1,6 +1,6 @@
 import React from 'react';
 import OfferList, { OfferData } from '../components/OfferList/offer-list';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Map from '../components/map/map';
 import { AppRoutes } from '../constants';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,10 +9,16 @@ import CitiesList from '../components/CitiesList/cities-list';
 import { setCity } from '../store/action';
 import SortOptions, { SortType } from '../components/SortOptions/sort-options';
 import Spinner from '../components/Spinner/spinner';
+import { logout as logoutAction } from '../store/action';
 
+
+function logout() {
+  return logoutAction();
+}
 
 const MainPage: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentCity = useSelector(selectCity);
   const offersLoading = useSelector(selectOffersLoading);
   const offersError = useSelector(selectOffersError);
@@ -25,7 +31,8 @@ const MainPage: React.FC = () => {
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault();
     localStorage.removeItem('six-cities-token');
-    // dispatch(logout());
+    dispatch(logout());
+    navigate(AppRoutes.Login); // или Root
   };
 
   function getSortedOffers(offersToSort: OfferData[], sort: SortType): OfferData[] {
@@ -73,9 +80,9 @@ const MainPage: React.FC = () => {
                       </Link>
                     </li>
                     <li className="header__nav-item">
-                      <Link className="header__nav-link" to={AppRoutes.Root} onClick={handleLogout}>
+                      <button className="header__nav-link" onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                         <span className="header__signout">Sign out</span>
-                      </Link>
+                      </button>
                     </li>
                   </>
                 ) : (
@@ -119,5 +126,5 @@ const MainPage: React.FC = () => {
     </div>
   );
 };
-export default MainPage;
 
+export default MainPage;

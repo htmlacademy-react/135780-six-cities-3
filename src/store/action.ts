@@ -5,6 +5,7 @@ export const SET_CITY = 'SET_CITY';
 export const SET_OFFERS = 'SET_OFFERS';
 export const SET_AUTHORIZATION_STATUS = 'SET_AUTHORIZATION_STATUS';
 export const SET_USER = 'SET_USER';
+export const LOGOUT = 'LOGOUT';
 
 // Экшены
 export type SetCityAction = {
@@ -35,8 +36,12 @@ export type SetUserAction = {
   payload: User | null;
 };
 
+export type LogoutAction = {
+  type: typeof LOGOUT;
+};
+
 // Объединённый тип всех экшенов
-export type Actions = SetCityAction | SetOffersAction | SetAuthorizationStatusAction | SetUserAction;
+export type Actions = SetCityAction | SetOffersAction | SetAuthorizationStatusAction | SetUserAction | LogoutAction;
 
 
 export const setCity = (city: string): SetCityAction => ({
@@ -60,4 +65,9 @@ export const setAuthorizationStatus = (
 export const setUser = (user: User | null): SetUserAction => ({
   type: 'SET_USER',
   payload: user,
+});
+
+
+export const logout = () => ({
+  type: 'LOGOUT',
 });
