@@ -2,11 +2,21 @@ import { OfferData } from '../components/OfferList/offer-list';
 import { fetchOffers } from './thunks';
 
 // Тип состояния приложения
+export type User = {
+  name: string;
+  avatarUrl: string;
+  isPro: boolean;
+  email: string;
+  token: string;
+};
+
 export type State = {
   city: string;
   offers: OfferData[];
   offersLoading: boolean;
   offersError: string | null;
+  authorizationStatus: 'AUTH' | 'NO_AUTH' | 'UNKNOWN';
+  user: User | null;
 };
 
 // Начальное состояние
@@ -15,12 +25,16 @@ export const initialState: State = {
   offers: [],
   offersLoading: false,
   offersError: null,
+  authorizationStatus: 'UNKNOWN',
+  user: null,
 };
 
 // Типы действий
 type Action =
   | { type: 'SET_CITY'; payload: string }
-  | { type: 'SET_OFFERS'; payload: OfferData[] };
+  | { type: 'SET_OFFERS'; payload: OfferData[] }
+  | { type: 'SET_AUTHORIZATION_STATUS'; payload: 'AUTH' | 'NO_AUTH' | 'UNKNOWN' }
+  | { type: 'SET_USER'; payload: User | null };
 
 // Редьюсер
 export function offersReducer(state: State = initialState, action: Action): State {
@@ -29,6 +43,10 @@ export function offersReducer(state: State = initialState, action: Action): Stat
       return { ...state, city: action.payload };
     case 'SET_OFFERS':
       return { ...state, offers: action.payload };
+    case 'SET_AUTHORIZATION_STATUS':
+      return { ...state, authorizationStatus: action.payload };
+    case 'SET_USER':
+      return { ...state, user: action.payload };
     default:
       return state;
   }
@@ -36,8 +54,7 @@ export function offersReducer(state: State = initialState, action: Action): Stat
 
 // Обработка асинхронных экшенов (fetchOffers)
 export function rootReducer(state: State = initialState, action: Action | { type: string; payload?: unknown }): State {
-  // Only pass Action-typed actions to offersReducer
-  if (action.type === 'SET_CITY' || action.type === 'SET_OFFERS') {
+  if (action.type === 'SET_CITY' || action.type === 'SET_OFFERS' || action.type === 'SET_AUTHORIZATION_STATUS') {
     state = offersReducer(state, action as Action);
   }
   switch (action.type) {

@@ -1,14 +1,13 @@
 import React from 'react';
-import OfferList from '../components/OfferList/offer-list';
+import OfferList, { OfferData } from '../components/OfferList/offer-list';
 import { Link } from 'react-router-dom';
 import Map from '../components/map/map';
 import { AppRoutes } from '../constants';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectOffersByCity, selectCity, selectOffersLoading, selectOffersError } from '../store/selectors';
+import { selectOffersByCity, selectCity, selectOffersLoading, selectOffersError, selectAuthorizationStatus, selectUser } from '../store/selectors';
 import CitiesList from '../components/CitiesList/cities-list';
 import { setCity } from '../store/action';
 import SortOptions, { SortType } from '../components/SortOptions/sort-options';
-import { OfferData } from '../components/OfferList/offer-list';
 import Spinner from '../components/Spinner/spinner';
 
 
@@ -21,6 +20,13 @@ const MainPage: React.FC = () => {
   const [activeOfferId, setActiveOfferId] = React.useState<string | null>(null);
   const [sortType, setSortType] = React.useState<SortType>('Popular');
   const cities = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const user = useSelector(selectUser) as { avatarUrl: string; email: string } | null;
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    localStorage.removeItem('six-cities-token');
+    // dispatch(logout());
+  };
 
   function getSortedOffers(offersToSort: OfferData[], sort: SortType): OfferData[] {
     switch (sort) {
@@ -56,17 +62,29 @@ const MainPage: React.FC = () => {
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <Link className="header__nav-link header__nav-link--profile" to={AppRoutes.Login}>
-                    <div className="header__avatar-wrapper user__avatar-wrapper"></div>
-                    <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                  </Link>
-                </li>
-                <li className="header__nav-item">
-                  <Link className="header__nav-link" to={AppRoutes.Root}>
-                    <span className="header__signout">Sign out</span>
-                  </Link>
-                </li>
+                {authorizationStatus === 'AUTH' && user ? (
+                  <>
+                    <li className="header__nav-item user">
+                      <Link className="header__nav-link header__nav-link--profile" to={AppRoutes.Login}>
+                        <div className="header__avatar-wrapper user__avatar-wrapper">
+                          <img src={user.avatarUrl} alt="User avatar" style={{ borderRadius: '50%', width: 30, height: 30 }} />
+                        </div>
+                        <span className="header__user-name user__name">{user.email}</span>
+                      </Link>
+                    </li>
+                    <li className="header__nav-item">
+                      <Link className="header__nav-link" to={AppRoutes.Root} onClick={handleLogout}>
+                        <span className="header__signout">Sign out</span>
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  <li className="header__nav-item user">
+                    <Link className="header__nav-link header__nav-link--profile" to="/login">
+                      <span className="header__login">Sign in</span>
+                    </Link>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
