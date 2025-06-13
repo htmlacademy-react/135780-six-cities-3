@@ -1,10 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import React from 'react';
-import MainPage from './Pages/main-page';
-import NotFoundPage from './Pages/not-found-page';
-import FavoritesPage from './Pages/favorite-page';
-import LoginPage from './Pages/login-page';
-import OfferPage from './Pages/offer-page';
+import MainPage from './pages/main-page';
+import NotFoundPage from './pages/not-found-page';
+import FavoritesPage from './pages/favorite-page';
+import LoginPage from './pages/login-page';
+import OfferPage from './pages/offer-page';
 import PrivateRoute from './components/PrivateRoute/private-route';
 import { AppRoutes } from './constants';
 

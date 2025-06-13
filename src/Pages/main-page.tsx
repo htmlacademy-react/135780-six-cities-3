@@ -1,24 +1,18 @@
 import React from 'react';
 import OfferList, { OfferData } from '../components/OfferList/offer-list';
-import { Link, useNavigate } from 'react-router-dom';
 import Map from '../components/map/map';
-import { AppRoutes } from '../constants';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectOffersByCity, selectCity, selectOffersLoading, selectOffersError, selectAuthorizationStatus, selectUser } from '../store/selectors';
+import { selectOffersByCity, selectCity, selectOffersLoading, selectOffersError} from '../store/selectors';
 import CitiesList from '../components/CitiesList/cities-list';
 import { setCity } from '../store/action';
-import SortOptions, { SortType } from '../components/SortOptions/sort-options';
+import SortOptions from '../components/SortOptions/sort-options';
 import Spinner from '../components/Spinner/spinner';
-import { logout as logoutAction } from '../store/action';
+import { getSortedOffers, SortType } from '../utils/sort-offers';
+import Header from '../components/Header/header';
 
-
-function logout() {
-  return logoutAction();
-}
 
 const MainPage: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const currentCity = useSelector(selectCity);
   const offersLoading = useSelector(selectOffersLoading);
   const offersError = useSelector(selectOffersError);
@@ -26,27 +20,7 @@ const MainPage: React.FC = () => {
   const [activeOfferId, setActiveOfferId] = React.useState<string | null>(null);
   const [sortType, setSortType] = React.useState<SortType>('Popular');
   const cities = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
-  const authorizationStatus = useSelector(selectAuthorizationStatus);
-  const user = useSelector(selectUser);
-  const handleLogout = (e: React.MouseEvent) => {
-    e.preventDefault();
-    localStorage.removeItem('six-cities-token');
-    dispatch(logout());
-    navigate(AppRoutes.Login); // или Root
-  };
 
-  function getSortedOffers(offersToSort: OfferData[], sort: SortType): OfferData[] {
-    switch (sort) {
-      case 'PriceLowToHigh':
-        return [...offersToSort].sort((a, b) => a.price - b.price);
-      case 'PriceHighToLow':
-        return [...offersToSort].sort((a, b) => b.price - a.price);
-      case 'TopRatedFirst':
-        return [...offersToSort].sort((a, b) => b.rating - a.rating);
-      default:
-        return offersToSort;
-    }
-  }
   const sortedOffers = getSortedOffers(offers, sortType);
 
   if (offersLoading) {
@@ -59,44 +33,7 @@ const MainPage: React.FC = () => {
 
   return (
     <div className="page page--gray page--main">
-      <header className="header">
-        <div className="container">
-          <div className="header__wrapper">
-            <div className="header__left">
-              <Link className="header__logo-link header__logo-link--active" to={AppRoutes.Root}>
-                <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
-              </Link>
-            </div>
-            <nav className="header__nav">
-              <ul className="header__nav-list">
-                {authorizationStatus === 'AUTH' && user ? (
-                  <>
-                    <li className="header__nav-item user">
-                      <Link className="header__nav-link header__nav-link--profile" to={AppRoutes.Login}>
-                        <div className="header__avatar-wrapper user__avatar-wrapper">
-                          <img src={user.avatarUrl} alt="User avatar" style={{ borderRadius: '50%', width: 30, height: 30 }} />
-                        </div>
-                        <span className="header__user-name user__name">{user.email}</span>
-                      </Link>
-                    </li>
-                    <li className="header__nav-item">
-                      <button className="header__nav-link" onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                        <span className="header__signout">Sign out</span>
-                      </button>
-                    </li>
-                  </>
-                ) : (
-                  <li className="header__nav-item user">
-                    <Link className="header__nav-link header__nav-link--profile" to="/login">
-                      <span className="header__login">Sign in</span>
-                    </Link>
-                  </li>
-                )}
-              </ul>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header/>
 
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>
