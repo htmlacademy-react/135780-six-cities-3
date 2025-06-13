@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectAuthorizationStatus, selectUser } from '../../store/selectors';
-import { logout } from '../../store/action';
+import { logout } from '../../store/reducer';
 import { AppRoutes } from '../../constants';
 
 

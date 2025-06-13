@@ -4,7 +4,7 @@ import Map from '../components/map/map';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectOffersByCity, selectCity, selectOffersLoading, selectOffersError} from '../store/selectors';
 import CitiesList from '../components/CitiesList/cities-list';
-import { setCity } from '../store/action';
+import { setCity } from '../store/reducer';
 import SortOptions from '../components/SortOptions/sort-options';
 import Spinner from '../components/Spinner/spinner';
 import { getSortedOffers, SortType } from '../utils/sort-offers';

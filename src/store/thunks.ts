@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { OfferData } from '../components/OfferList/offer-list';
 import { RootState, AppThunkExtra } from './index';
-import { setAuthorizationStatus, setUser } from './action';
+import { setAuthorizationStatus, setUser } from './reducer';
+import { OfferData } from '../components/OfferList/offer-list';
 
 type UserResponse = {
   name: string;
@@ -11,13 +11,7 @@ type UserResponse = {
   token: string;
 };
 
-type AuthInfo = {
-  name: string;
-  avatarUrl: string;
-  isPro: boolean;
-  email: string;
-  token: string;
-};
+type AuthInfo = UserResponse;
 
 export const checkAuth = createAsyncThunk<
   void,
@@ -38,8 +32,8 @@ export const checkAuth = createAsyncThunk<
 );
 
 export const fetchOffers = createAsyncThunk<
-  OfferData[], // что возвращает
-  void, // аргумент
+  OfferData[],
+  void,
   { extra: AppThunkExtra; state: RootState }
 >(
   'offers/fetchOffers',
