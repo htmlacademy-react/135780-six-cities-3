@@ -3,14 +3,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import { setOffers } from './store/action';
-import { offers as mockOffers } from './mocks/offers';
+import { fetchOffers } from './store/thunks';
 
-// Инициализация стора тестовыми данными
-store.dispatch(setOffers(mockOffers.map((offer) => ({
-  ...offer,
-  id: offer.id.toString(),
-}))));
+store.dispatch(fetchOffers());
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -19,7 +14,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App offers={mockOffers} />
+      <App />
     </Provider>
   </React.StrictMode>
 );

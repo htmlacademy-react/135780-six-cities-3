@@ -10,10 +10,8 @@ type Location = {
   zoom: number;
 };
 
-type Offer = OfferData;
-
 export type MapProps = {
-  offers: Offer[];
+  offers: OfferData[];
   activeOfferId?: string | null;
 };
 
@@ -37,7 +35,8 @@ const activeMarkerIcon = L.icon({
 
 export default function Map({ offers, activeOfferId }: MapProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const cityLocation = offers.length > 0 ? offers[0].location : defaultCity;
+  // Явно указываем тип Location
+  const cityLocation: Location = offers.length > 0 ? offers[0].location : defaultCity;
   const mapInstance = useMap(mapRef, { location: cityLocation, zoom: cityLocation.zoom });
 
   useEffect(() => {
@@ -54,14 +53,12 @@ export default function Map({ offers, activeOfferId }: MapProps) {
       return;
     }
 
-    // Удаляем только маркеры (оставляем базовый слой)
     mapInstance.eachLayer((layer) => {
       if (layer instanceof L.Marker) {
         mapInstance.removeLayer(layer);
       }
     });
 
-    // Добавляем маркеры с условной подсветкой
     offers.forEach((offer) => {
       const isActive = offer.id.toString() === activeOfferId?.toString();
       L.marker(

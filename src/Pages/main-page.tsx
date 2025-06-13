@@ -4,21 +4,23 @@ import { Link } from 'react-router-dom';
 import Map from '../components/map/map';
 import { AppRoutes } from '../constants';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectOffersByCity, selectCity } from '../store/selectors';
+import { selectOffersByCity, selectCity, selectOffersLoading, selectOffersError } from '../store/selectors';
 import CitiesList from '../components/CitiesList/cities-list';
 import { setCity } from '../store/action';
 import SortOptions, { SortType } from '../components/SortOptions/sort-options';
 import { OfferData } from '../components/OfferList/offer-list';
+import Spinner from '../components/Spinner/spinner';
 
 
 const MainPage: React.FC = () => {
   const dispatch = useDispatch();
   const currentCity = useSelector(selectCity);
+  const offersLoading = useSelector(selectOffersLoading);
+  const offersError = useSelector(selectOffersError);
   const offers: OfferData[] = useSelector(selectOffersByCity);
   const [activeOfferId, setActiveOfferId] = React.useState<string | null>(null);
   const [sortType, setSortType] = React.useState<SortType>('Popular');
   const cities = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
-
 
   function getSortedOffers(offersToSort: OfferData[], sort: SortType): OfferData[] {
     switch (sort) {
@@ -33,6 +35,14 @@ const MainPage: React.FC = () => {
     }
   }
   const sortedOffers = getSortedOffers(offers, sortType);
+
+  if (offersLoading) {
+    return <Spinner />;
+  }
+
+  if (offersError) {
+    return <p style={{color: 'red'}}>{offersError}</p>;
+  }
 
   return (
     <div className="page page--gray page--main">
