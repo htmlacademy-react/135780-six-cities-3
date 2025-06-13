@@ -20,9 +20,9 @@ export type MapProps = {
 };
 
 const defaultCity: Location = {
-  latitude: 52.3909553943508,
-  longitude: 4.85309666406198,
-  zoom: 12,
+  latitude: 48.8566,
+  longitude: 2.3522,
+  zoom: 0,
 };
 
 const markerIcon = L.icon({
@@ -39,7 +39,17 @@ const activeMarkerIcon = L.icon({
 
 export default function Map({ offers, activeOfferId }: MapProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useMap(mapRef, { location: defaultCity, zoom: defaultCity.zoom });
+  const cityLocation = offers.length > 0 ? offers[0].location : defaultCity;
+  const mapInstance = useMap(mapRef, { location: cityLocation, zoom: cityLocation.zoom });
+
+  useEffect(() => {
+    if (mapInstance) {
+      mapInstance.setView(
+        [cityLocation.latitude, cityLocation.longitude],
+        cityLocation.zoom
+      );
+    }
+  }, [mapInstance, cityLocation]);
 
   useEffect(() => {
     if (!mapInstance) {

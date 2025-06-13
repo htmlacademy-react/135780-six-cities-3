@@ -34,6 +34,7 @@ const nearOffers = [
     type: 'Apartment',
     rating: 4.5,
     image: 'img/apartment-01.jpg',
+    city: 'Paris',
     location: { latitude: 52.3909553943508, longitude: 4.85309666406198, zoom: 8 },
   },
   {
@@ -44,6 +45,7 @@ const nearOffers = [
     type: 'Loft',
     rating: 5,
     image: 'img/apartment-02.jpg',
+    city: 'Amsterdam',
     location: { latitude: 52.369553943508, longitude: 4.85309666406198, zoom: 8 },
   },
   {
@@ -54,6 +56,7 @@ const nearOffers = [
     type: 'Room',
     rating: 4.2,
     image: 'img/apartment-small-04.jpg',
+    city: 'Amsterdam',
     location: { latitude: 52.3909553943508, longitude: 4.929309666406198, zoom: 8 },
   },
 ];

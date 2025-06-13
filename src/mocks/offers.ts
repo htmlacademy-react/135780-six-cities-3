@@ -17,7 +17,7 @@ export const offers = [
       isPro: true,
     },
     city: 'Amsterdam',
-    location: { latitude: 52.3909553943508, longitude: 4.85309666406198, zoom: 8 },
+    location: { latitude: 52.3609553943508, longitude: 4.85309666406198, zoom: 12 },
   },
   {
     id: 2,
@@ -36,8 +36,8 @@ export const offers = [
       avatarUrl: 'img/avatar-max.jpg',
       isPro: false,
     },
-    city: 'Amsterdam',
-    location: { latitude: 52.3609553943508, longitude: 4.85309666406198, zoom: 8 },
+    city: 'Hamburg',
+    location: { latitude: 	53.5753, longitude: 10.0153, zoom: 12 },
   },
   {
     id: 3,
@@ -56,8 +56,8 @@ export const offers = [
       avatarUrl: 'img/avatar-louise.jpg',
       isPro: true,
     },
-    city: 'Amsterdam',
-    location: { latitude: 52.3909553943508, longitude: 4.929309666406198, zoom: 8 },
+    city: 'Cologne',
+    location: { latitude: 50.9333, longitude: 6.95, zoom: 12 },
   },
   {
     id: 4,
@@ -76,7 +76,7 @@ export const offers = [
       avatarUrl: 'img/avatar-peter.jpg',
       isPro: false,
     },
-    city: 'Amsterdam',
-    location: { latitude: 52.3809553943508, longitude: 4.939309666406198, zoom: 8 },
+    city: 'Brussels',
+    location: { latitude: 	50.84663243572826, longitude: 4.350272402931058, zoom: 12 },
   },
 ];
