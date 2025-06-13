@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import useMap from '../../hooks/use-map';
+import { OfferData } from '../OfferList/offer-list';
 
 type Location = {
   latitude: number;
@@ -9,10 +10,7 @@ type Location = {
   zoom: number;
 };
 
-type Offer = {
-  id: string;
-  location: Location;
-};
+type Offer = OfferData;
 
 export type MapProps = {
   offers: Offer[];
