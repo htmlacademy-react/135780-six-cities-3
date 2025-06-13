@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, generatePath } from 'react-router-dom';
+import { AppRoutes } from '../../constants';
 
 type Offer = {
-  id: number;
+  id: string;
   isPremium: boolean;
   price: number;
   title: string;
@@ -14,22 +15,34 @@ type Offer = {
 type OfferCardProps = {
   offer: Offer;
   isActive?: boolean;
+  onHover: (id: string | null) => void;
 };
 
-const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive }) => {
-  const { id, isPremium, price, title, type, rating, image } = offer;
+const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover }) => {
+  const { isPremium, price, title, type, rating, image } = offer;
   const ratingPercentage = `${Math.round(rating) * 20}%`;
+  const detailUrl = generatePath(AppRoutes.Offer, { offerId: offer.id.toString() });
 
   return (
-    <article className={`cities__card place-card${isActive ? ' place-card--active' : ''}`}>
+    <article
+      className={`cities__card place-card${isActive ? ' place-card--active' : ''}`}
+      onMouseEnter={() => onHover(offer.id.toString())}
+      onMouseLeave={() => onHover(null)}
+    >
       {isPremium && (
         <div className="place-card__mark">
           <span>Premium</span>
         </div>
       )}
       <div className="cities__image-wrapper place-card__image-wrapper">
-        <Link to={`/offer/${id}`}>
-          <img className="place-card__image" src={image} width="260" height="200" alt="Place image" />
+        <Link to={detailUrl}>
+          <img
+            className="place-card__image"
+            src={image}
+            width="260"
+            height="200"
+            alt="Place image"
+          />
         </Link>
       </div>
       <div className="place-card__info">
@@ -52,7 +65,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive }) => {
           </div>
         </div>
         <h2 className="place-card__name">
-          <Link to={`/offer/${id}`}>{title}</Link>
+          <Link to={detailUrl}>{title}</Link>
         </h2>
         <p className="place-card__type">{type}</p>
       </div>

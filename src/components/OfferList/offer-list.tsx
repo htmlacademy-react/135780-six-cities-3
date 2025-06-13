@@ -1,37 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
 import OfferCard from '../OfferCard/offer-card';
 
-type Offer = {
-  id: number;
+export type OfferData = {
+  id: string;
   isPremium: boolean;
   price: number;
   title: string;
   type: string;
   rating: number;
   image: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    zoom: number;
+  };
 };
 
 type OfferListProps = {
-  offers: Offer[];
+  offers: OfferData[];
+  onCardHover?: (id: string | null) => void;
   className?: string;
 };
 
-const OfferList: React.FC<OfferListProps> = ({ offers, className = 'cities__places-list places__list tabs__content' }) => {
-  const [activeOfferId, setActiveOfferId] = useState<number | null>(null);
-
-  return (
-    <div className={className}>
-      {offers.map((offer) => (
-        <div
-          key={offer.id}
-          onMouseEnter={() => setActiveOfferId(offer.id)}
-          onMouseLeave={() => setActiveOfferId(null)}
-        >
-          <OfferCard offer={offer} isActive={activeOfferId === offer.id} />
-        </div>
-      ))}
-    </div>
-  );
-};
+const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className }) => (
+  <div className={`offer-list ${className || ''}`}>
+    {offers.map((offer) => (
+      <OfferCard key={offer.id} offer={offer} onHover={onCardHover || (() => {})} />
+    ))}
+  </div>
+);
 
 export default OfferList;

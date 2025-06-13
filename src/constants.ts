@@ -45,3 +45,11 @@ export const offers = [
     image: 'img/room.jpg',
   },
 ];
+
+export const AppRoutes = {
+  Root: '/',
+  Login: '/login',
+  Favorites: '/favorites',
+  Offer: '/offer/:offerId',
+  NotFound: '*',
+} as const;
