@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 type CitiesListProps = {
   cities: string[];
@@ -10,16 +11,13 @@ const CitiesList: React.FC<CitiesListProps> = ({ cities, currentCity, onCityClic
   <ul className="locations__list tabs__list">
     {cities.map((city) => (
       <li className="locations__item" key={city}>
-        <a
+        <Link
           className={`locations__item-link tabs__item${city === currentCity ? ' tabs__item--active' : ''}`}
-          href="#"
-          onClick={(evt) => {
-            evt.preventDefault();
-            onCityClick(city);
-          }}
+          to="/"
+          onClick={() => onCityClick(city)}
         >
           <span>{city}</span>
-        </a>
+        </Link>
       </li>
     ))}
   </ul>
