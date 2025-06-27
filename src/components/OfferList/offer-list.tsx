@@ -6,6 +6,16 @@ export type OfferData = {
   title: string;
   type: string;
   price: number;
+  images: string[];
+  goods: string[];
+  description: string;
+  bedrooms: number;
+  maxAdults: number;
+  host: {
+    name: string;
+  avatarUrl: string;
+  isPro: boolean;
+  };
   city: {
     name: string;
     location: {
