@@ -19,12 +19,11 @@ const Header: React.FC = React.memo(() => {
 
   type RootState = {
     offers: Offer[];
+    favorites: Offer[];
   };
 
   const favoriteCount = useSelector((state: RootState) =>
-    Array.isArray(state.offers)
-      ? state.offers.filter((offer) => offer.isFavorite).length
-      : 0
+    Array.isArray(state.favorites) ? state.favorites.length : 0
   );
 
   const handleLogout = (e: React.MouseEvent) => {

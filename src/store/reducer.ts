@@ -1,5 +1,5 @@
 import { OfferData } from '../components/OfferList/offer-list';
-import { fetchOffers, fetchOffer, fetchNearOffers, fetchComments } from './thunks';
+import { fetchOffers, fetchOffer, fetchNearOffers, fetchComments, toggleFavoriteOnServer, fetchFavorites } from './thunks';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ReviewData } from '../types/review';
 
@@ -28,6 +28,9 @@ export type State = {
   comments: ReviewData[];
   commentsLoading: boolean;
   commentsError: string | null;
+  favorites: OfferData[];
+  favoritesLoading: boolean;
+  favoritesError: string | null;
 };
 
 // Начальное состояние
@@ -47,6 +50,9 @@ export const initialState: State = {
   comments: [],
   commentsLoading: false,
   commentsError: null,
+  favorites: [],
+  favoritesLoading: false,
+  favoritesError: null,
 };
 
 const mainSlice = createSlice({
@@ -79,10 +85,34 @@ const mainSlice = createSlice({
     logout(state) {
       state.authorizationStatus = 'NO_AUTH';
       state.user = null;
+      state.favorites = [];
+      state.offers = [];
     },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchFavorites.pending, (state) => {
+        state.favoritesLoading = true;
+        state.favoritesError = null;
+      })
+      .addCase(fetchFavorites.fulfilled, (state, action) => {
+        state.favoritesLoading = false;
+        state.favorites = action.payload;
+      })
+      .addCase(fetchFavorites.rejected, (state, action) => {
+        state.favoritesLoading = false;
+        state.favoritesError = action.payload as string;
+      })
+      .addCase(toggleFavoriteOnServer.fulfilled, (state, action) => {
+        const updated = action.payload;
+        const idx = state.offers.findIndex((o) => o.id === updated.id);
+        if (idx !== -1) {
+          state.offers[idx] = updated;
+        }
+        if (state.currentOffer && state.currentOffer.id === updated.id) {
+          state.currentOffer = updated;
+        }
+      })
       .addCase(fetchOffers.pending, (state) => {
         state.offersLoading = true;
         state.offersError = null;

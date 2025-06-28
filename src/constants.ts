@@ -54,4 +54,4 @@ export const AppRoutes = {
   NotFound: '/404',
 } as const;
 
-export const cities = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
+export const cities = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf', 'IRK'];

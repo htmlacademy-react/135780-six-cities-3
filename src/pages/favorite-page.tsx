@@ -1,20 +1,26 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import OfferList, { OfferData } from '../components/OfferList/offer-list';
 import Header from '../components/Header/header';
-import { RootState } from '../store';
+import { RootState, AppDispatch } from '../store';
 import { Link, useNavigate } from 'react-router-dom';
 import { setCity } from '../store/reducer';
 import { AppRoutes } from '../constants';
+import { fetchFavorites } from '../store/thunks';
+import Spinner from '../components/Spinner/spinner';
+
 
 const FavoritesPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    dispatch(fetchFavorites());
+  }, [dispatch]);
   const navigate = useNavigate();
 
   // Получаем только избранные офферы
-  const offers: OfferData[] = useSelector((state: RootState) =>
-    state.offers.filter((offer: OfferData) => offer.isFavorite)
-  );
+  const offers: OfferData[] = useSelector((state: RootState) => state.favorites);
+  const isLoading = useSelector((state: RootState) => state.favoritesLoading);
+  const error = useSelector((state: RootState) => state.favoritesError);
   const isEmpty = offers.length === 0;
 
   // Группировка по городам
@@ -31,6 +37,14 @@ const FavoritesPage: React.FC = () => {
     dispatch(setCity(city));
     navigate(AppRoutes.Root);
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (error) {
+    return <div style={{ color: 'red', textAlign: 'center' }}>{error}</div>;
+  }
 
   return (
     <div className={`page${isEmpty ? ' page--favorites-empty' : ''}`}>

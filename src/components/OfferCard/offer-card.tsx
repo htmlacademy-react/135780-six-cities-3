@@ -1,8 +1,11 @@
 import React from 'react';
-import { Link, generatePath } from 'react-router-dom';
+import { Link, generatePath, useNavigate } from 'react-router-dom';
 import { AppRoutes } from '../../constants';
-import { useDispatch } from 'react-redux';
-import { toggleFavorite } from '../../store/reducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleFavoriteOnServer } from '../../store/thunks';
+import { selectAuthorizationStatus } from '../../store/selectors';
+import type { AppDispatch } from '../../store';
+
 
 type Offer = {
   id: string;
@@ -26,11 +29,18 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavor
   const { isPremium, price, title, type, rating, isFavorite } = offer;
   const ratingPercentage = `${Math.round(rating) * 20}%`;
   const detailUrl = generatePath(AppRoutes.Offer, { offerId: offer.id.toString() });
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const navigate = useNavigate();
+
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(toggleFavorite(offer.id));
+    if (authorizationStatus !== 'AUTH') {
+      navigate(AppRoutes.Login);
+      return;
+    }
+    dispatch(toggleFavoriteOnServer({ offerId: offer.id, status: offer.isFavorite ? 0 : 1 }));
   };
 
   const cardClass = isFavorites ? 'favorites__card place-card' : `cities__card place-card${isActive ? ' place-card--active' : ''}`;

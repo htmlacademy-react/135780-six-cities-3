@@ -10,6 +10,7 @@ import Spinner from '../components/Spinner/spinner';
 import { getSortedOffers, SortType } from '../utils/sort-offers';
 import Header from '../components/Header/header';
 import { cities } from '../constants';
+import MainEmpty from '../components/MainEmpty/main-empty';
 
 const MainPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,29 @@ const MainPage: React.FC = () => {
 
   if (offersError) {
     return <p style={{color: 'red'}}>{offersError}</p>;
+  }
+
+  if (offers.length === 0) {
+    return (
+      <div className="page page--gray page--main">
+        <Header />
+        <main className="page__main page__main--index page__main--index-empty">
+          <h1 className="visually-hidden">Cities</h1>
+          <div className="tabs">
+            <section className="locations container">
+              <CitiesList
+                cities={cities}
+                currentCity={currentCity}
+                onCityClick={(city) => dispatch(setCity(city))}
+              />
+            </section>
+          </div>
+          <div className="cities">
+            <MainEmpty city={currentCity} />
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (

@@ -67,26 +67,6 @@ export const fetchOffer = createAsyncThunk<
   }
 );
 
-export const login = createAsyncThunk<
-  void,
-  { email: string; password: string },
-  { extra: AppThunkExtra; state: RootState }
->(
-  'user/login',
-  async ({ email, password }, { extra: api, dispatch }) => {
-    try {
-      const { data } = await api.post<AuthInfo>('/login', { email, password });
-      localStorage.setItem('six-cities-token', data.token);
-      dispatch(setAuthorizationStatus('AUTH'));
-      dispatch(setUser(data));
-    } catch (error) {
-      dispatch(setAuthorizationStatus('NO_AUTH'));
-      dispatch(setUser(null));
-      throw error;
-    }
-  }
-);
-
 
 // Получение предложений неподалёку
 export const fetchNearOffers = createAsyncThunk<
@@ -154,6 +134,62 @@ export const postComment = createAsyncThunk<
         return rejectWithValue(error.response.data.message || 'Ошибка отправки комментария');
       }
       return rejectWithValue('Ошибка отправки комментария');
+    }
+  }
+);
+
+export const fetchFavorites = createAsyncThunk<
+  OfferData[],
+  void,
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'offers/fetchFavorites',
+  async (_arg, { extra: api, rejectWithValue }) => {
+    try {
+      const { data } = await api.get<OfferData[]>('/favorite');
+      return data;
+    } catch (error) {
+      return rejectWithValue('Не удалось загрузить избранное');
+    }
+  }
+);
+
+export const login = createAsyncThunk<
+  void,
+  { email: string; password: string },
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'user/login',
+  async ({ email, password }, { extra: api, dispatch }) => {
+    try {
+      const { data } = await api.post<AuthInfo>('/login', { email, password });
+      localStorage.setItem('six-cities-token', data.token);
+      dispatch(setAuthorizationStatus('AUTH'));
+      dispatch(setUser(data));
+      dispatch(fetchOffers());
+      dispatch(fetchFavorites());
+    } catch (error) {
+      dispatch(setAuthorizationStatus('NO_AUTH'));
+      dispatch(setUser(null));
+      throw error;
+    }
+  }
+);
+
+export const toggleFavoriteOnServer = createAsyncThunk<
+  OfferData,
+  { offerId: string; status: 0 | 1 },
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'offers/toggleFavoriteOnServer',
+  async ({ offerId, status }, { extra: api, dispatch, rejectWithValue }) => {
+    try {
+      const { data } = await api.post<OfferData>(`/favorite/${offerId}/${status}`);
+      // После успешного изменения — обновить избранное
+      dispatch(fetchFavorites());
+      return data;
+    } catch (error) {
+      return rejectWithValue('Ошибка при изменении избранного');
     }
   }
 );
