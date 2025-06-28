@@ -6,11 +6,26 @@ import { logout } from '../../store/reducer';
 import { AppRoutes } from '../../constants';
 
 
-const Header: React.FC = () => {
+const Header: React.FC = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authorizationStatus = useSelector(selectAuthorizationStatus);
   const user = useSelector(selectUser);
+
+  type Offer = {
+    id: number;
+    isFavorite: boolean;
+  };
+
+  type RootState = {
+    offers: Offer[];
+  };
+
+  const favoriteCount = useSelector((state: RootState) =>
+    Array.isArray(state.offers)
+      ? state.offers.filter((offer) => offer.isFavorite).length
+      : 0
+  );
 
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -39,6 +54,7 @@ const Header: React.FC = () => {
                       </div>
                       <span className="header__user-name user__name">{user.email}</span>
                     </Link>
+                    <span className="header__favorite-count">{favoriteCount}</span>
                   </li>
                   <li className="header__nav-item">
                     <button className="header__nav-link" onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
@@ -59,6 +75,8 @@ const Header: React.FC = () => {
       </div>
     </header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

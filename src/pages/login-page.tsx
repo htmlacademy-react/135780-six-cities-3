@@ -1,20 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../store/thunks';
 import { selectAuthorizationStatus } from '../store/selectors';
-import { Navigate, Link } from 'react-router-dom';
-import { AppRoutes } from '../constants';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { AppRoutes, cities } from '../constants';
 import type { AppDispatch } from '../store';
+import { setCity } from '../store/reducer';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch<AppDispatch>();
   const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const navigate = useNavigate();
+
+  const randomCity = useMemo(() => cities[Math.floor(Math.random() * cities.length)], []);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(login({ email, password }));
+  };
+
+  const handleCityClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    dispatch(setCity(randomCity));
+    navigate(AppRoutes.Root);
   };
 
   if (authorizationStatus === 'AUTH') {
@@ -69,8 +80,12 @@ const LoginPage: React.FC = () => {
           </section>
           <section className="locations locations--login locations--current">
             <div className="locations__item">
-              <Link className="locations__item-link" to={AppRoutes.Login}>
-                <span>Amsterdam</span>
+              <Link
+                className="locations__item-link"
+                to={AppRoutes.Root}
+                onClick={handleCityClick}
+              >
+                <span>{randomCity}</span>
               </Link>
             </div>
           </section>
@@ -81,3 +96,4 @@ const LoginPage: React.FC = () => {
 };
 
 export default LoginPage;
+

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { AppRoutes } from '../../constants';
+import { useDispatch } from 'react-redux';
+import { toggleFavorite } from '../../store/reducer';
 
 type Offer = {
   id: string;
@@ -10,22 +12,36 @@ type Offer = {
   type: string;
   rating: number;
   previewImage: string;
+  isFavorite: boolean;
 };
 
 type OfferCardProps = {
   offer: Offer;
   isActive?: boolean;
   onHover: (id: string | null) => void;
+  isFavorites?: boolean;
 };
 
-const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover }) => {
-  const { isPremium, price, title, type, rating } = offer;
+const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavorites }) => {
+  const { isPremium, price, title, type, rating, isFavorite } = offer;
   const ratingPercentage = `${Math.round(rating) * 20}%`;
   const detailUrl = generatePath(AppRoutes.Offer, { offerId: offer.id.toString() });
+  const dispatch = useDispatch();
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    dispatch(toggleFavorite(offer.id));
+  };
+
+  const cardClass = isFavorites ? 'favorites__card place-card' : `cities__card place-card${isActive ? ' place-card--active' : ''}`;
+  const imageWrapperClass = isFavorites ? 'favorites__image-wrapper place-card__image-wrapper' : 'cities__image-wrapper place-card__image-wrapper';
+  const infoClass = isFavorites ? 'favorites__card-info place-card__info' : 'place-card__info';
+  const imageWidth = isFavorites ? 150 : 260;
+  const imageHeight = isFavorites ? 110 : 200;
 
   return (
     <article
-      className={`cities__card place-card${isActive ? ' place-card--active' : ''}`}
+      className={cardClass}
       onMouseEnter={() => onHover(offer.id.toString())}
       onMouseLeave={() => onHover(null)}
     >
@@ -34,28 +50,32 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover }) => {
           <span>Premium</span>
         </div>
       )}
-      <div className="cities__image-wrapper place-card__image-wrapper">
+      <div className={imageWrapperClass}>
         <Link to={detailUrl}>
           <img
             className="place-card__image"
             src={offer.previewImage}
-            width="260"
-            height="200"
+            width={imageWidth}
+            height={imageHeight}
             alt="Place image"
           />
         </Link>
       </div>
-      <div className="place-card__info">
+      <div className={infoClass}>
         <div className="place-card__price-wrapper">
           <div className="place-card__price">
             <b className="place-card__price-value">&euro;{price}</b>
             <span className="place-card__price-text">&#47;&nbsp;night</span>
           </div>
-          <button className="place-card__bookmark-button button" type="button">
+          <button
+            className={`place-card__bookmark-button button${isFavorite ? ' place-card__bookmark-button--active' : ''}`}
+            type="button"
+            onClick={handleBookmarkClick}
+          >
             <svg className="place-card__bookmark-icon" width="18" height="19">
               <use xlinkHref="#icon-bookmark"></use>
             </svg>
-            <span className="visually-hidden">To bookmarks</span>
+            <span className="visually-hidden">{isFavorites ? 'In bookmarks' : 'To bookmarks'}</span>
           </button>
         </div>
         <div className="place-card__rating rating">
