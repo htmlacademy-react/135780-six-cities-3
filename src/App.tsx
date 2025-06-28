@@ -23,6 +23,7 @@ const App: React.FC = () => (
       />
       <Route path={AppRoutes.Offer} element={<OfferPage />} />
       <Route path={AppRoutes.NotFound} element={<NotFoundPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   </BrowserRouter>
 );

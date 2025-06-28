@@ -5,11 +5,11 @@ import ReviewList from '../components/Review/review-list';
 import Map from '../components/map/map';
 import OfferList from '../components/OfferList/offer-list';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchOffer, fetchNearOffers, fetchComments } from '../store/thunks';
+import { fetchOffer, fetchNearOffers, fetchComments, toggleFavoriteOnServer } from '../store/thunks';
 import { RootState, AppDispatch } from '../store';
 import Header from '../components/Header/header';
 import { Navigate } from 'react-router-dom';
-import { resetOffer, toggleFavorite } from '../store/reducer';
+import { resetOffer } from '../store/reducer';
 import { AppRoutes } from '../constants';
 import Spinner from '../components/Spinner/spinner';
 
@@ -75,7 +75,14 @@ const OfferPage: React.FC = () => {
                 <button
                   className={`offer__bookmark-button button${offer.isFavorite ? ' offer__bookmark-button--active' : ''}`}
                   type="button"
-                  onClick={() => dispatch(toggleFavorite(offer.id))}
+                  onClick={() => {
+                    dispatch(
+                      toggleFavoriteOnServer({
+                        offerId: offer.id,
+                        status: offer.isFavorite ? 0 : 1,
+                      })
+                    );
+                  }}
                 >
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark"></use>

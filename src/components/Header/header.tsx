@@ -4,10 +4,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectAuthorizationStatus, selectUser } from '../../store/selectors';
 import { logout } from '../../store/reducer';
 import { AppRoutes } from '../../constants';
-
+import { fetchOffers } from '../../store/thunks';
+import type { AppDispatch } from '../../store/index';
 
 const Header: React.FC = React.memo(() => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const authorizationStatus = useSelector(selectAuthorizationStatus);
   const user = useSelector(selectUser);
@@ -30,6 +31,7 @@ const Header: React.FC = React.memo(() => {
     e.preventDefault();
     localStorage.removeItem('six-cities-token');
     dispatch(logout());
+    dispatch(fetchOffers());
     navigate(AppRoutes.Login);
   };
 
