@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import CommentForm from '../components/CommentForm/comment-form';
 import ReviewList from '../components/Review/review-list';
 import Map from '../components/map/map';
@@ -12,12 +12,15 @@ import { Navigate } from 'react-router-dom';
 import { resetOffer } from '../store/reducer';
 import { AppRoutes } from '../constants';
 import Spinner from '../components/Spinner/spinner';
+import { selectAuthorizationStatus } from '../store/selectors';
 
 
 const OfferPage: React.FC = () => {
   const { offerId } = useParams<{ offerId: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
 
 
   useEffect(() => {
@@ -33,7 +36,6 @@ const OfferPage: React.FC = () => {
   const offer = useSelector((state: RootState) => state.currentOffer);
   const offerLoading = useSelector((state: RootState) => state.currentOfferLoading);
   const offerError = useSelector((state: RootState) => state.currentOfferError);
-  const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
   const nearOffers = useSelector((state: RootState) => state.nearOffers);
   const comments = useSelector((state: RootState) => state.comments);
 
@@ -76,6 +78,10 @@ const OfferPage: React.FC = () => {
                   className={`offer__bookmark-button button${offer.isFavorite ? ' offer__bookmark-button--active' : ''}`}
                   type="button"
                   onClick={() => {
+                    if (authorizationStatus !== 'AUTH') {
+                      navigate(AppRoutes.Login);
+                      return;
+                    }
                     dispatch(
                       toggleFavoriteOnServer({
                         offerId: offer.id,
