@@ -1,12 +1,23 @@
 import { OfferData } from '../components/OfferList/offer-list';
 import { fetchOffers } from './thunks';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Тип состояния приложения
+export type User = {
+  name: string;
+  avatarUrl: string;
+  isPro: boolean;
+  email: string;
+  token: string;
+};
+
 export type State = {
   city: string;
   offers: OfferData[];
   offersLoading: boolean;
   offersError: string | null;
+  authorizationStatus: 'AUTH' | 'NO_AUTH' | 'UNKNOWN';
+  user: User | null;
 };
 
 // Начальное состояние
@@ -15,39 +26,45 @@ export const initialState: State = {
   offers: [],
   offersLoading: false,
   offersError: null,
+  authorizationStatus: 'UNKNOWN',
+  user: null,
 };
 
-// Типы действий
-type Action =
-  | { type: 'SET_CITY'; payload: string }
-  | { type: 'SET_OFFERS'; payload: OfferData[] };
+const mainSlice = createSlice({
+  name: 'main',
+  initialState,
+  reducers: {
+    setCity(state, action: PayloadAction<string>) {
+      state.city = action.payload;
+    },
+    setAuthorizationStatus(state, action: PayloadAction<'AUTH' | 'NO_AUTH' | 'UNKNOWN'>) {
+      state.authorizationStatus = action.payload;
+    },
+    setUser(state, action: PayloadAction<User | null>) {
+      state.user = action.payload;
+    },
+    logout(state) {
+      state.authorizationStatus = 'NO_AUTH';
+      state.user = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchOffers.pending, (state) => {
+        state.offersLoading = true;
+        state.offersError = null;
+      })
+      .addCase(fetchOffers.fulfilled, (state, action) => {
+        state.offersLoading = false;
+        state.offers = action.payload;
+      })
+      .addCase(fetchOffers.rejected, (state, action) => {
+        state.offersLoading = false;
+        state.offersError = action.payload as string;
+      });
+  },
+});
 
-// Редьюсер
-export function offersReducer(state: State = initialState, action: Action): State {
-  switch (action.type) {
-    case 'SET_CITY':
-      return { ...state, city: action.payload };
-    case 'SET_OFFERS':
-      return { ...state, offers: action.payload };
-    default:
-      return state;
-  }
-}
+export const { setCity, setAuthorizationStatus, setUser, logout } = mainSlice.actions;
+export default mainSlice.reducer;
 
-// Обработка асинхронных экшенов (fetchOffers)
-export function rootReducer(state: State = initialState, action: Action | { type: string; payload?: unknown }): State {
-  // Only pass Action-typed actions to offersReducer
-  if (action.type === 'SET_CITY' || action.type === 'SET_OFFERS') {
-    state = offersReducer(state, action as Action);
-  }
-  switch (action.type) {
-    case fetchOffers.pending.type:
-      return { ...state, offersLoading: true, offersError: null };
-    case fetchOffers.fulfilled.type:
-      return { ...state, offersLoading: false, offers: action.payload as OfferData[] };
-    case fetchOffers.rejected.type:
-      return { ...state, offersLoading: false, offersError: action.payload as string | null };
-    default:
-      return state;
-  }
-}
