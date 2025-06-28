@@ -51,5 +51,7 @@ export const AppRoutes = {
   Login: '/login',
   Favorites: '/favorites',
   Offer: '/offer/:offerId',
-  NotFound: '*',
+  NotFound: '/404',
 } as const;
+
+export const cities = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];

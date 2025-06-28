@@ -7,7 +7,7 @@ import LoginPage from './pages/login-page';
 import OfferPage from './pages/offer-page';
 import PrivateRoute from './components/PrivateRoute/private-route';
 import { AppRoutes } from './constants';
-//замена Pages на pages
+
 const App: React.FC = () => (
   <BrowserRouter>
     <Routes>
@@ -17,7 +17,7 @@ const App: React.FC = () => (
         path={AppRoutes.Favorites}
         element={
           <PrivateRoute>
-            <FavoritesPage offers={[]} />
+            <FavoritesPage />
           </PrivateRoute>
         }
       />

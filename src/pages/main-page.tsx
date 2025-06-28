@@ -9,7 +9,7 @@ import SortOptions from '../components/SortOptions/sort-options';
 import Spinner from '../components/Spinner/spinner';
 import { getSortedOffers, SortType } from '../utils/sort-offers';
 import Header from '../components/Header/header';
-
+import { cities } from '../constants';
 
 const MainPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -19,7 +19,6 @@ const MainPage: React.FC = () => {
   const offers: OfferData[] = useSelector(selectOffersByCity);
   const [activeOfferId, setActiveOfferId] = React.useState<string | null>(null);
   const [sortType, setSortType] = React.useState<SortType>('Popular');
-  const cities = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
 
   const sortedOffers = getSortedOffers(offers, sortType);
 

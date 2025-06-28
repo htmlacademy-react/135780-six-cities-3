@@ -2,6 +2,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState, AppThunkExtra } from './index';
 import { setAuthorizationStatus, setUser } from './reducer';
 import { OfferData } from '../components/OfferList/offer-list';
+import { ReviewData } from '../types/review';
+import axios from 'axios';
+
 
 type UserResponse = {
   name: string;
@@ -47,6 +50,23 @@ export const fetchOffers = createAsyncThunk<
   }
 );
 
+export const fetchOffer = createAsyncThunk<
+  OfferData,
+  string,
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'offer/fetchOffer',
+  async (id, { extra, rejectWithValue }) => {
+    const api = extra;
+    try {
+      const { data } = await api.get<OfferData>(`/offers/${id}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue('Не удалось загрузить предложение');
+    }
+  }
+);
+
 export const login = createAsyncThunk<
   void,
   { email: string; password: string },
@@ -63,6 +83,77 @@ export const login = createAsyncThunk<
       dispatch(setAuthorizationStatus('NO_AUTH'));
       dispatch(setUser(null));
       throw error;
+    }
+  }
+);
+
+
+// Получение предложений неподалёку
+export const fetchNearOffers = createAsyncThunk<
+  OfferData[],
+  string,
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'offer/fetchNearOffers',
+  async (id, { extra, rejectWithValue }) => {
+    const api = extra;
+    try {
+      const { data } = await api.get<OfferData[]>(`/offers/${id}/nearby`);
+      return data;
+    } catch (error) {
+      return rejectWithValue('Не удалось загрузить предложения рядом');
+    }
+  }
+);
+
+// Получение комментариев
+export const fetchComments = createAsyncThunk<
+  ReviewData[],
+  string,
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'offer/fetchComments',
+  async (id, { extra, rejectWithValue }) => {
+    const api = extra;
+    try {
+      const { data } = await api.get<ReviewData[]>(`/comments/${id}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue('Не удалось загрузить комментарии');
+    }
+  }
+);
+
+type NewComment = {
+  comment: string;
+  rating: number;
+};
+
+export const postComment = createAsyncThunk<
+  void,
+  { offerId: string; data: NewComment },
+  { state: RootState; extra: AppThunkExtra }
+>(
+  'comments/postComment',
+  async ({ offerId, data }, { dispatch, rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('six-cities-token');
+      await axios.post(
+        `https://15.design.htmlacademy.pro/six-cities/comments/${offerId}`,
+        data,
+        {
+          headers: {
+            'X-Token': token,
+          },
+        }
+      );
+      // После успешной отправки — обновить список комментариев
+      dispatch(fetchComments(offerId));
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+        return rejectWithValue(error.response.data.message || 'Ошибка отправки комментария');
+      }
+      return rejectWithValue('Ошибка отправки комментария');
     }
   }
 );
