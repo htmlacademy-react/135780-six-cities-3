@@ -17,7 +17,7 @@ const App: React.FC = () => (
         path={AppRoutes.Favorites}
         element={
           <PrivateRoute>
-            <FavoritesPage offers={[]} />
+            <FavoritesPage />
           </PrivateRoute>
         }
       />
