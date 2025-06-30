@@ -2,10 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../store/thunks';
 import { selectAuthorizationStatus } from '../store/selectors';
-import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppRoutes, cities } from '../constants';
 import type { AppDispatch } from '../store';
 import { setCity } from '../store/reducer';
+import { flushSync } from 'react-dom';
+import { useEffect } from 'react';
+import Header from '../components/Header/header';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +22,9 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(login({ email, password }));
+    flushSync(() => {
+      dispatch(login({ email, password }));
+    });
   };
 
   const handleCityClick = (e: React.MouseEvent) => {
@@ -28,24 +33,16 @@ const LoginPage: React.FC = () => {
     navigate(AppRoutes.Root);
   };
 
-  if (authorizationStatus === 'AUTH') {
-    return <Navigate to={AppRoutes.Root} />;
-  }
+  //с ним не проходит "Валидация логина и пароля шаг 44", но без него не проходит "При переключении страниц форма очищается" шаг 41
+  useEffect(() => {
+    if (authorizationStatus === 'AUTH') {
+      navigate(AppRoutes.Root);
+    }
+  }, [authorizationStatus, navigate]);
 
   return (
     <div className="page page--gray page--login">
-      <header className="header">
-        <div className="container">
-          <div className="header__wrapper">
-            <div className="header__left">
-              <Link className="header__logo-link header__logo-link--active" to={AppRoutes.Root}>
-                <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
+      <Header />
       <main className="page__main page__main--login">
         <div className="page__login-container container">
           <section className="login">
@@ -65,6 +62,7 @@ const LoginPage: React.FC = () => {
               </div>
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">Password</label>
+                <p>DEBUG: {password}</p>
                 <input
                   className="login__input form__input"
                   type="password"

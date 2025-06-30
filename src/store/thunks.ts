@@ -119,7 +119,7 @@ export const postComment = createAsyncThunk<
     try {
       const token = localStorage.getItem('six-cities-token');
       await axios.post(
-        `https://15.design.htmlacademy.pro/six-cities/comments/${offerId}`,
+        `https://16.design.htmlacademy.pro/six-cities/comments/${offerId}`,
         data,
         {
           headers: {
