@@ -2,9 +2,8 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectAuthorizationStatus, selectUser } from '../../store/selectors';
-import { logout } from '../../store/reducer';
 import { AppRoutes } from '../../constants';
-import { fetchOffers } from '../../store/thunks';
+import { logoutAndReset } from '../../store/thunks';
 import type { AppDispatch } from '../../store/index';
 
 const Header: React.FC = React.memo(() => {
@@ -27,11 +26,9 @@ const Header: React.FC = React.memo(() => {
     Array.isArray(state.favorites) ? state.favorites.length : 0
   );
 
-  const handleLogout = (e: React.MouseEvent) => {
-    e.preventDefault();
-    localStorage.removeItem('six-cities-token');
-    dispatch(logout());
-    dispatch(fetchOffers());
+  const handleLogout = (event: React.MouseEvent) => {
+    event.preventDefault();
+    dispatch(logoutAndReset());
     navigate(AppRoutes.Login);
   };
 

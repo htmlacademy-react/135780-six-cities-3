@@ -6,13 +6,13 @@ import Map from '../components/map/map';
 import OfferList from '../components/OfferList/offer-list';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOffer, fetchNearOffers, fetchComments, toggleFavoriteOnServer } from '../store/thunks';
-import { RootState, AppDispatch } from '../store';
-import Header from '../components/Header/header';
-import { Navigate } from 'react-router-dom';
+import { AppDispatch } from '../store';
 import { resetOffer } from '../store/reducer';
 import { AppRoutes } from '../constants';
+import NotFoundPage from './not-found-page';
 import Spinner from '../components/Spinner/spinner';
-import { selectAuthorizationStatus } from '../store/selectors';
+import { selectAuthorizationStatus, selectCurrentOffer, selectCurrentOfferLoading, selectNearOffers, selectComments, } from '../store/selectors';
+import FavoriteButton from '../components/FavoriteButton/favorite-button';
 
 
 const OfferPage: React.FC = () => {
@@ -33,32 +33,48 @@ const OfferPage: React.FC = () => {
   }, [offerId, dispatch]);
 
 
-  const offer = useSelector((state: RootState) => state.currentOffer);
-  const offerLoading = useSelector((state: RootState) => state.currentOfferLoading);
-  const offerError = useSelector((state: RootState) => state.currentOfferError);
-  const nearOffers = useSelector((state: RootState) => state.nearOffers);
-  const comments = useSelector((state: RootState) => state.comments);
+  const offer = useSelector(selectCurrentOffer);
+  const offerLoading = useSelector(selectCurrentOfferLoading);
+  const nearOffers = useSelector(selectNearOffers);
+  const comments = useSelector(selectComments);
+  const nearbyOffers = nearOffers.slice(0, 3);
+
+  const sortedComments = [...comments]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 10);
+  const handleFavoriteButtonClick = () => {
+    if (authorizationStatus !== 'AUTH') {
+      navigate(AppRoutes.Login);
+      return;
+    }
+    if (!offer) {
+      return;
+    }
+    dispatch(
+      toggleFavoriteOnServer({
+        offerId: offer.id,
+        status: offer.isFavorite ? 0 : 1,
+      })
+    );
+  };
 
   if (offerLoading) {
     return <Spinner />;
   }
-  if (offerError) {
-    return <Navigate to={AppRoutes.NotFound} replace />;
-  }
   if (!offer) {
-    return <div>Нет данных</div>;
+    return <NotFoundPage />;
   }
 
   return (
     <div className="page">
-      <Header />
+
       <main className="page__main page__main--offer">
         <section className="offer">
           <div className="offer__gallery-container container">
             <div className="offer__gallery">
               {offer.images?.slice(0, 6).map((img, i) => (
                 <div className="offer__image-wrapper" key={img}>
-                  <img className="offer__image" src={img} alt={`Photo ${i + 1}`} />
+                  <img className="offer__image" src={img} alt={`${offer.title} — photo ${i + 1}`} />
                 </div>
               ))}
             </div>
@@ -74,27 +90,13 @@ const OfferPage: React.FC = () => {
 
               <div className="offer__name-wrapper">
                 <h1 className="offer__name">{offer.title}</h1>
-                <button
-                  className={`offer__bookmark-button button${offer.isFavorite ? ' offer__bookmark-button--active' : ''}`}
-                  type="button"
-                  onClick={() => {
-                    if (authorizationStatus !== 'AUTH') {
-                      navigate(AppRoutes.Login);
-                      return;
-                    }
-                    dispatch(
-                      toggleFavoriteOnServer({
-                        offerId: offer.id,
-                        status: offer.isFavorite ? 0 : 1,
-                      })
-                    );
-                  }}
+                <FavoriteButton
+                  isActive={offer.isFavorite}
+                  onClick={handleFavoriteButtonClick}
+                  className="offer__bookmark-button button"
                 >
-                  <svg className="offer__bookmark-icon" width="31" height="33">
-                    <use xlinkHref="#icon-bookmark"></use>
-                  </svg>
-                  <span className="visually-hidden">To bookmarks</span>
-                </button>
+    To bookmarks
+                </FavoriteButton>
               </div>
 
               <div className="offer__rating rating">
@@ -142,7 +144,7 @@ const OfferPage: React.FC = () => {
 
               <section className="offer__reviews reviews">
                 <ReviewList
-                  reviews={comments.map((item) => ({
+                  reviews={sortedComments.map((item) => ({
                     id: item.id,
                     avatar: item.user.avatarUrl,
                     username: item.user.name,
@@ -164,7 +166,7 @@ const OfferPage: React.FC = () => {
           <section className="near-places places">
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
             <OfferList
-              offers={nearOffers.slice(0, 3)}
+              offers={nearbyOffers}
               onCardHover={setActiveOfferId}
               className="near-places__list places__list"
             />

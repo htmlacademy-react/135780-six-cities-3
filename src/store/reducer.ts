@@ -60,9 +60,9 @@ const mainSlice = createSlice({
   initialState,
   reducers: {
     toggleFavorite(state, action: PayloadAction<string>) {
-      const offer = state.offers.find((o) => o.id === action.payload);
-      if (offer) {
-        offer.isFavorite = !offer.isFavorite;
+      const offerItem = state.offers.find((item) => item.id === action.payload);
+      if (offerItem) {
+        offerItem.isFavorite = !offerItem.isFavorite;
       }
       if (state.currentOffer && state.currentOffer.id === action.payload) {
         state.currentOffer.isFavorite = !state.currentOffer.isFavorite;
@@ -104,13 +104,13 @@ const mainSlice = createSlice({
         state.favoritesError = action.payload as string;
       })
       .addCase(toggleFavoriteOnServer.fulfilled, (state, action) => {
-        const updated = action.payload;
-        const idx = state.offers.findIndex((o) => o.id === updated.id);
-        if (idx !== -1) {
-          state.offers[idx] = updated;
+        const updatedOffer = action.payload;
+        const offerIndex = state.offers.findIndex((offerItem) => offerItem.id === updatedOffer.id);
+        if (offerIndex !== -1) {
+          state.offers[offerIndex] = updatedOffer;
         }
-        if (state.currentOffer && state.currentOffer.id === updated.id) {
-          state.currentOffer = updated;
+        if (state.currentOffer && state.currentOffer.id === updatedOffer.id) {
+          state.currentOffer = updatedOffer;
         }
       })
       .addCase(fetchOffers.pending, (state) => {

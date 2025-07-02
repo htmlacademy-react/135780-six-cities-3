@@ -48,7 +48,7 @@ const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className, i
       <OfferCard
         key={offer.id}
         offer={offer}
-        onHover={onCardHover || (() => {})}
+        onHover={onCardHover}
         isFavorites={isFavorites}
       />
     ))}

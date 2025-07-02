@@ -1,10 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState, AppThunkExtra } from './index';
-import { setAuthorizationStatus, setUser } from './reducer';
+import { setAuthorizationStatus, setUser, logout } from './reducer';
 import { OfferData } from '../components/OfferList/offer-list';
 import { ReviewData } from '../types/review';
-import axios from 'axios';
-
 
 type UserResponse = {
   name: string;
@@ -67,6 +65,18 @@ export const fetchOffer = createAsyncThunk<
   }
 );
 
+export const logoutAndReset = createAsyncThunk<
+  void,
+  void,
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'user/logoutAndReset',
+  async (_, { dispatch }) => {
+    localStorage.removeItem('six-cities-token');
+    dispatch(logout());
+    await dispatch(fetchOffers()); // обязательно await!
+  }
+);
 
 // Получение предложений неподалёку
 export const fetchNearOffers = createAsyncThunk<
@@ -115,25 +125,19 @@ export const postComment = createAsyncThunk<
   { state: RootState; extra: AppThunkExtra }
 >(
   'comments/postComment',
-  async ({ offerId, data }, { dispatch, rejectWithValue }) => {
+  async ({ offerId, data }, { dispatch, rejectWithValue, extra: api }) => {
     try {
-      const token = localStorage.getItem('six-cities-token');
-      await axios.post(
-        `https://16.design.htmlacademy.pro/six-cities/comments/${offerId}`,
-        data,
-        {
-          headers: {
-            'X-Token': token,
-          },
-        }
+      await api.post(
+        `/comments/${offerId}`,
+        data
       );
-      // После успешной отправки — обновить список комментариев
       dispatch(fetchComments(offerId));
     } catch (error: unknown) {
-      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
-        return rejectWithValue(error.response.data.message || 'Ошибка отправки комментария');
-      }
-      return rejectWithValue('Ошибка отправки комментария');
+      return rejectWithValue(
+        typeof error === 'object' && error !== null && 'response' in error
+          ? (error as { response: { data?: { message?: string } } }).response.data?.message || 'Ошибка отправки комментария'
+          : 'Ошибка отправки комментария'
+      );
     }
   }
 );

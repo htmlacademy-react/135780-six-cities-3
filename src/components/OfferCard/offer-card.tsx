@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleFavoriteOnServer } from '../../store/thunks';
 import { selectAuthorizationStatus } from '../../store/selectors';
 import type { AppDispatch } from '../../store';
+import FavoriteButton from '../FavoriteButton/favorite-button';
 
 
 type Offer = {
@@ -21,7 +22,7 @@ type Offer = {
 type OfferCardProps = {
   offer: Offer;
   isActive?: boolean;
-  onHover: (id: string | null) => void;
+  onHover?: (id: string | null) => void;
   isFavorites?: boolean;
 };
 
@@ -34,8 +35,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavor
   const navigate = useNavigate();
 
 
-  const handleBookmarkClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleBookmarkClick = () => {
     if (authorizationStatus !== 'AUTH') {
       navigate(AppRoutes.Login);
       return;
@@ -52,8 +52,8 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavor
   return (
     <article
       className={cardClass}
-      onMouseEnter={() => onHover(offer.id.toString())}
-      onMouseLeave={() => onHover(null)}
+      onMouseEnter={() => onHover?.(offer.id.toString())}
+      onMouseLeave={() => onHover?.(null)}
     >
       {isPremium && (
         <div className="place-card__mark">
@@ -77,16 +77,15 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavor
             <b className="place-card__price-value">&euro;{price}</b>
             <span className="place-card__price-text">&#47;&nbsp;night</span>
           </div>
-          <button
-            className={`place-card__bookmark-button button${isFavorite ? ' place-card__bookmark-button--active' : ''}`}
-            type="button"
+          <FavoriteButton
+            isActive={isFavorite}
             onClick={handleBookmarkClick}
+            className="place-card__bookmark-button"
+            iconWidth={18}
+            iconHeight={19}
           >
-            <svg className="place-card__bookmark-icon" width="18" height="19">
-              <use xlinkHref="#icon-bookmark"></use>
-            </svg>
-            <span className="visually-hidden">{isFavorites ? 'In bookmarks' : 'To bookmarks'}</span>
-          </button>
+            {isFavorites ? 'In bookmarks' : 'To bookmarks'}
+          </FavoriteButton>
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 type CitiesListProps = {
   cities: string[];
   currentCity: string;
-  onCityClick: (city: string) => void;
+  onCityClick?: (city: string) => void;
 };
 
 const CitiesList: React.FC<CitiesListProps> = ({ cities, currentCity, onCityClick }) => (
@@ -14,7 +14,7 @@ const CitiesList: React.FC<CitiesListProps> = ({ cities, currentCity, onCityClic
         <Link
           className={`locations__item-link tabs__item${city === currentCity ? ' tabs__item--active' : ''}`}
           to="/"
-          onClick={() => onCityClick(city)}
+          onClick={() => onCityClick?.(city)}
         >
           <span>{city}</span>
         </Link>

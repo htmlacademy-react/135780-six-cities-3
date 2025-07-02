@@ -15,6 +15,10 @@ type CommentFormProps = {
   offerId: string;
 };
 
+export const ReviewLength = {
+  Min: 50,
+  Max: 300,
+} as const;
 
 const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
   const [comment, setComment] = useState('');
@@ -24,16 +28,16 @@ const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setComment(e.target.value);
+  const handleCommentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(event.target.value);
   };
 
-  const handleRatingChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setRating(Number(e.target.value));
+  const handleRatingChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setRating(Number(event.target.value));
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
     const idToUse = offerId;
     if (!idToUse) {
       return;
@@ -65,8 +69,8 @@ const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
   return (
     <form
       className="reviews__form form"
-      onSubmit={(e) => {
-        handleSubmit(e);
+      onSubmit={(event) => {
+        handleSubmit(event);
       }}
     >
       <label className="reviews__label form__label" htmlFor="review">
@@ -104,8 +108,8 @@ const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
         placeholder="Tell how was your stay, what you like and what can be improved"
         value={comment}
         onChange={handleCommentChange}
-        minLength={50}
-        maxLength={300}
+        minLength={ReviewLength.Min}
+        maxLength={ReviewLength.Max}
         disabled={loading}
       />
       <div className="reviews__button-wrapper">
@@ -115,7 +119,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
         <button
           className="reviews__submit form__submit button"
           type="submit"
-          disabled={comment.length < 50 || rating === 0 || loading}
+          disabled={comment.length < ReviewLength.Min || rating === 0 || loading}
         >
           Submit
         </button>

@@ -6,9 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AppRoutes, cities } from '../constants';
 import type { AppDispatch } from '../store';
 import { setCity } from '../store/reducer';
-import { flushSync } from 'react-dom';
 import { useEffect } from 'react';
-import Header from '../components/Header/header';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -20,15 +18,13 @@ const LoginPage: React.FC = () => {
   const randomCity = useMemo(() => cities[Math.floor(Math.random() * cities.length)], []);
 
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    flushSync(() => {
-      dispatch(login({ email, password }));
-    });
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    dispatch(login({ email, password }));
   };
 
-  const handleCityClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleCityClick = (event: React.MouseEvent) => {
+    event.preventDefault();
     dispatch(setCity(randomCity));
     navigate(AppRoutes.Root);
   };
@@ -42,7 +38,6 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="page page--gray page--login">
-      <Header />
       <main className="page__main page__main--login">
         <div className="page__login-container container">
           <section className="login">
@@ -57,12 +52,11 @@ const LoginPage: React.FC = () => {
                   placeholder="Email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
                 />
               </div>
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">Password</label>
-                <p>DEBUG: {password}</p>
                 <input
                   className="login__input form__input"
                   type="password"
@@ -70,7 +64,7 @@ const LoginPage: React.FC = () => {
                   placeholder="Password"
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(event) => setPassword(event.target.value)}
                 />
               </div>
               <button className="login__submit form__submit button" type="submit">Sign in</button>

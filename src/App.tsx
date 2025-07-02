@@ -8,6 +8,7 @@ import OfferPage from './pages/offer-page';
 import PrivateRoute from './components/PrivateRoute/private-route';
 import { AppRoutes } from './constants';
 
+
 const App: React.FC = () => (
   <BrowserRouter>
     <Routes>

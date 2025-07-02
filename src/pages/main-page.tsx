@@ -8,12 +8,13 @@ import { setCity } from '../store/reducer';
 import SortOptions from '../components/SortOptions/sort-options';
 import Spinner from '../components/Spinner/spinner';
 import { getSortedOffers, SortType } from '../utils/sort-offers';
-import Header from '../components/Header/header';
 import { cities } from '../constants';
 import MainEmpty from '../components/MainEmpty/main-empty';
+import type { AppDispatch } from '../store';
+import Header from '../components/Header/header';
 
 const MainPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const currentCity = useSelector(selectCity);
   const offersLoading = useSelector(selectOffersLoading);
   const offersError = useSelector(selectOffersError);
@@ -33,31 +34,16 @@ const MainPage: React.FC = () => {
 
   if (offers.length === 0) {
     return (
-      <div className="page page--gray page--main">
-        <Header />
-        <main className="page__main page__main--index page__main--index-empty">
-          <h1 className="visually-hidden">Cities</h1>
-          <div className="tabs">
-            <section className="locations container">
-              <CitiesList
-                cities={cities}
-                currentCity={currentCity}
-                onCityClick={(city) => dispatch(setCity(city))}
-              />
-            </section>
-          </div>
-          <div className="cities">
-            <MainEmpty city={currentCity} />
-          </div>
-        </main>
-      </div>
+      <MainEmpty
+        city={currentCity}
+        onCityClick={(city) => dispatch(setCity(city))}
+      />
     );
   }
 
   return (
     <div className="page page--gray page--main">
-      <Header/>
-
+      <Header />
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>
         <div className="tabs">
