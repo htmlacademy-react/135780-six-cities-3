@@ -1,25 +1,32 @@
 import React, {useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import OfferList, { OfferData } from '../components/OfferList/offer-list';
-import { RootState, AppDispatch } from '../store';
+import { AppDispatch } from '../store';
 import { Link, useNavigate } from 'react-router-dom';
 import { setCity } from '../store/reducer';
 import { AppRoutes } from '../constants';
 import { fetchFavorites } from '../store/thunks';
 import Spinner from '../components/Spinner/spinner';
+import { selectFavorites, selectFavoritesLoading, selectFavoritesError } from '../store/selectors';
 
 
 const FavoritesPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
-    dispatch(fetchFavorites());
+    const fetchData = async () => {
+      await dispatch(fetchFavorites()).unwrap();
+    };
+    fetchData();
   }, [dispatch]);
+
   const navigate = useNavigate();
 
   // Получаем только избранные офферы
-  const offers: OfferData[] = useSelector((state: RootState) => state.favorites);
-  const isLoading = useSelector((state: RootState) => state.favoritesLoading);
-  const error = useSelector((state: RootState) => state.favoritesError);
+
+
+  const offers: OfferData[] = useSelector(selectFavorites);
+  const isLoading = useSelector(selectFavoritesLoading);
+  const error = useSelector(selectFavoritesError);
   const isEmpty = offers.length === 0;
 
   // Группировка по городам
@@ -80,7 +87,8 @@ const FavoritesPage: React.FC = () => {
                         </Link>
                       </div>
                     </div>
-                    <OfferList offers={cityOffers} className="favorites__places" isFavorites />
+                    <OfferList key={offers.length} offers={cityOffers} className="favorites__places" isFavorites />
+
                   </li>
                 ))}
               </ul>

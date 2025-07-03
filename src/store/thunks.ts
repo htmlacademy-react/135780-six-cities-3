@@ -181,19 +181,13 @@ export const login = createAsyncThunk<
 );
 
 export const toggleFavoriteOnServer = createAsyncThunk<
-  OfferData,
+  string, // возвращаем id удаленного оффера
   { offerId: string; status: 0 | 1 },
   { extra: AppThunkExtra; state: RootState }
 >(
   'offers/toggleFavoriteOnServer',
-  async ({ offerId, status }, { extra: api, dispatch, rejectWithValue }) => {
-    try {
-      const { data } = await api.post<OfferData>(`/favorite/${offerId}/${status}`);
-      // После успешного изменения — обновить избранное
-      dispatch(fetchFavorites());
-      return data;
-    } catch (error) {
-      return rejectWithValue('Ошибка при изменении избранного');
-    }
+  async ({ offerId, status }, { extra: api }) => {
+    await api.post(`/favorite/${offerId}/${status}`);
+    return offerId;
   }
 );

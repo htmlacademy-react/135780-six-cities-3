@@ -104,14 +104,8 @@ const mainSlice = createSlice({
         state.favoritesError = action.payload as string;
       })
       .addCase(toggleFavoriteOnServer.fulfilled, (state, action) => {
-        const updatedOffer = action.payload;
-        const offerIndex = state.offers.findIndex((offerItem) => offerItem.id === updatedOffer.id);
-        if (offerIndex !== -1) {
-          state.offers[offerIndex] = updatedOffer;
-        }
-        if (state.currentOffer && state.currentOffer.id === updatedOffer.id) {
-          state.currentOffer = updatedOffer;
-        }
+        // Удаляем оффер из favorites локально
+        state.favorites = state.favorites.filter((offer) => offer.id !== action.payload);
       })
       .addCase(fetchOffers.pending, (state) => {
         state.offersLoading = true;

@@ -14,3 +14,6 @@ export const selectCurrentOfferLoading = (state: RootState) => state.currentOffe
 export const selectCurrentOfferError = (state: RootState) => state.currentOfferError;
 export const selectNearOffers = (state: RootState) => state.nearOffers;
 export const selectComments = (state: RootState) => state.comments;
+export const selectFavorites = (state: RootState) => state.favorites;
+export const selectFavoritesLoading = (state: RootState) => state.favoritesLoading;
+export const selectFavoritesError = (state: RootState) => state.favoritesError;
