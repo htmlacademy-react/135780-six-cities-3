@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import OfferList, { OfferData } from '../components/OfferList/offer-list';
 import { AppDispatch } from '../store';
@@ -12,11 +12,13 @@ import { selectFavorites, selectFavoritesLoading, selectFavoritesError } from '.
 
 const FavoritesPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const fetchedRef = useRef(false);
+
   useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(fetchFavorites()).unwrap();
-    };
-    fetchData();
+    if (!fetchedRef.current) {
+      dispatch(fetchFavorites());
+      fetchedRef.current = true;
+    }
   }, [dispatch]);
 
   const navigate = useNavigate();
@@ -87,7 +89,7 @@ const FavoritesPage: React.FC = () => {
                         </Link>
                       </div>
                     </div>
-                    <OfferList key={offers.length} offers={cityOffers} className="favorites__places" isFavorites />
+                    <OfferList offers={cityOffers} className="favorites__places" isFavorites />
 
                   </li>
                 ))}

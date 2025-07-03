@@ -88,24 +88,61 @@ const mainSlice = createSlice({
       state.favorites = [];
       state.offers = [];
     },
+
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchFavorites.pending, (state) => {
         state.favoritesLoading = true;
         state.favoritesError = null;
       })
-      .addCase(fetchFavorites.fulfilled, (state, action) => {
-        state.favoritesLoading = false;
-        state.favorites = action.payload;
-      })
+
       .addCase(fetchFavorites.rejected, (state, action) => {
         state.favoritesLoading = false;
         state.favoritesError = action.payload as string;
       })
       .addCase(toggleFavoriteOnServer.fulfilled, (state, action) => {
-        // Удаляем оффер из favorites локально
-        state.favorites = state.favorites.filter((offer) => offer.id !== action.payload);
+        const offerId = action.payload;
+        // Меняем isFavorite в offers
+        const offer = state.offers.find((o) => o.id === offerId);
+        if (offer) {
+          offer.isFavorite = !offer.isFavorite;
+          if (offer.isFavorite) {
+            // Добавляем в избранное, если ещё нет
+            if (!state.favorites.find((fav) => fav.id === offerId)) {
+              state.favorites.push({ ...offer });
+            }
+          } else {
+            // Удаляем из избранного
+            state.favorites = state.favorites.filter((fav) => fav.id !== offerId);
+          }
+        } else {
+          // Если оффера нет в offers ищем в favorites
+          const favOffer = state.favorites.find((fav) => fav.id === offerId);
+          if (favOffer) {
+            favOffer.isFavorite = !favOffer.isFavorite;
+            if (!favOffer.isFavorite) {
+              state.favorites = state.favorites.filter((fav) => fav.id !== offerId);
+            }
+          }
+        }
+        // Меняем isFavorite в currentOffer
+        if (state.currentOffer && state.currentOffer.id === offerId) {
+          state.currentOffer.isFavorite = offer ? offer.isFavorite : false;
+        }
+      })
+      .addCase(fetchFavorites.fulfilled, (state, action) => {
+        state.favoritesLoading = false;
+        state.favorites = action.payload;
+        // Синхронизируем isFavorite во всех offers
+        const favoriteIds = new Set(action.payload.map((o) => o.id));
+        state.offers.forEach((offer) => {
+          offer.isFavorite = favoriteIds.has(offer.id);
+        });
+        if (state.currentOffer) {
+          state.currentOffer.isFavorite = favoriteIds.has(state.currentOffer.id);
+        }
       })
       .addCase(fetchOffers.pending, (state) => {
         state.offersLoading = true;

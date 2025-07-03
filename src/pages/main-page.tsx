@@ -57,8 +57,9 @@ const MainPage: React.FC = () => {
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{sortedOffers.length} places to stay in {currentCity}</b>
-              <SortOptions activeSort={sortType} onSortChange={setSortType} />
+              <b className="places__found">
+                {sortedOffers.length} {sortedOffers.length === 1 ? 'place' : 'places'} to stay in {currentCity}
+              </b>              <SortOptions activeSort={sortType} onSortChange={setSortType} />
               <OfferList offers={sortedOffers} onCardHover={setActiveOfferId} className="cities__places-list" />
             </section>
             <div className="cities__right-section">

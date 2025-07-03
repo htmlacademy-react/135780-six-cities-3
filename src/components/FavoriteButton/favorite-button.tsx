@@ -18,7 +18,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   children,
 }) => (
   <button
-    className={`button${isActive ? ' offer__bookmark-button--active' : ''} ${className}`}
+    className={`button${isActive ? ' place-card__bookmark-button--active' : ''} ${className}`}
     type="button"
     onClick={onClick}
   >

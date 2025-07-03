@@ -181,7 +181,7 @@ export const login = createAsyncThunk<
 );
 
 export const toggleFavoriteOnServer = createAsyncThunk<
-  string, // возвращаем id удаленного оффера
+  string,
   { offerId: string; status: 0 | 1 },
   { extra: AppThunkExtra; state: RootState }
 >(
