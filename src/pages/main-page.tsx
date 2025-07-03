@@ -11,7 +11,6 @@ import { getSortedOffers, SortType } from '../utils/sort-offers';
 import { cities } from '../constants';
 import MainEmpty from '../components/MainEmpty/main-empty';
 import type { AppDispatch } from '../store';
-import Header from '../components/Header/header';
 
 const MainPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,7 +42,6 @@ const MainPage: React.FC = () => {
 
   return (
     <div className="page page--gray page--main">
-      <Header />
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>
         <div className="tabs">

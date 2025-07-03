@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from '../Header/header';
 import CitiesList from '../CitiesList/cities-list';
 import { cities } from '../../constants';
 
@@ -10,7 +9,6 @@ type MainEmptyProps = {
 
 const MainEmpty: React.FC<MainEmptyProps> = ({ city, onCityClick }) => (
   <div className="page page--gray page--main">
-    <Header />
     <main className="page__main page__main--index page__main--index-empty">
       <h1 className="visually-hidden">Cities</h1>
       <div className="tabs">

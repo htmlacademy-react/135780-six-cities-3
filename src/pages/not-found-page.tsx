@@ -15,7 +15,6 @@ const NotFoundPage: React.FC = () => {
   return (
     <div className="page page--gray page--not-found">
 
-
       <main className="page__main page__main--not-found">
         <div className="container">
           <section className="not-found">

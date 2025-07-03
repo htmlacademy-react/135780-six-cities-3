@@ -7,10 +7,12 @@ import LoginPage from './pages/login-page';
 import OfferPage from './pages/offer-page';
 import PrivateRoute from './components/PrivateRoute/private-route';
 import { AppRoutes } from './constants';
+import Header from './components/Header/header';
 
 
 const App: React.FC = () => (
   <BrowserRouter>
+    <Header />
     <Routes>
       <Route path={AppRoutes.Root} element={<MainPage />} />
       <Route path={AppRoutes.Login} element={<LoginPage />} />
