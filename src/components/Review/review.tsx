@@ -25,8 +25,10 @@ const Review: React.FC<ReviewProps> = ({ avatar, username, text, date, rating })
     </div>
     <div className="reviews__info">
       <div className="reviews__rating rating">
-        <span style={{ width: getStarsRating(rating) }}></span>
-        <span className="visually-hidden">Rating</span>
+        <div className="reviews__stars rating__stars">
+          <span style={{ width: getStarsRating(rating) }}></span>
+          <span className="visually-hidden">Rating</span>
+        </div>
       </div>
       <p className="reviews__text">{text}</p>
       <time className="reviews__time" dateTime={date}>

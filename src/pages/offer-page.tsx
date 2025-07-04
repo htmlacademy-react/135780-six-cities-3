@@ -19,7 +19,6 @@ import { getStarsRating } from '../utils/stars-rating';
 const OfferPage: React.FC = () => {
   const { offerId } = useParams<{ offerId: string }>();
   const dispatch = useDispatch<AppDispatch>();
-  // Removed unused activeOfferId state
   const navigate = useNavigate();
   const authorizationStatus = useSelector(selectAuthorizationStatus);
 
@@ -39,10 +38,6 @@ const OfferPage: React.FC = () => {
   const nearOffers = useSelector(selectNearOffers);
   const comments = useSelector(selectComments);
   const nearbyOffers = nearOffers.slice(0, 3);
-
-  const sortedComments = [...comments]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 10);
   const handleFavoriteButtonClick = () => {
     if (authorizationStatus !== 'AUTH') {
       navigate(AppRoutes.Login);
@@ -65,6 +60,11 @@ const OfferPage: React.FC = () => {
   if (!offer) {
     return <NotFoundPage />;
   }
+
+  const totalCommentsCount = comments.length;
+  const sortedComments = [...comments]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 10);
 
   return (
     <div className="page">
@@ -145,7 +145,7 @@ const OfferPage: React.FC = () => {
 
               <section className="offer__reviews reviews">
                 <ReviewList
-                  reviews={sortedComments.map((item) => ({
+                  comments={sortedComments.map((item) => ({
                     id: item.id,
                     avatar: item.user.avatarUrl,
                     username: item.user.name,
@@ -153,6 +153,7 @@ const OfferPage: React.FC = () => {
                     text: item.comment,
                     date: item.date,
                   }))}
+                  totalCommentsCount={totalCommentsCount}
                 />
                 {authorizationStatus === 'AUTH' && <CommentForm offerId={offer.id} />}
               </section>
