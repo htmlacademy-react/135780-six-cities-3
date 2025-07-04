@@ -6,6 +6,7 @@ import { toggleFavoriteOnServer } from '../../store/thunks';
 import { selectAuthorizationStatus } from '../../store/selectors';
 import type { AppDispatch } from '../../store';
 import FavoriteButton from '../FavoriteButton/favorite-button';
+import { getStarsRating } from '../../utils/stars-rating';
 
 
 type Offer = {
@@ -24,11 +25,11 @@ type OfferCardProps = {
   isActive?: boolean;
   onHover?: (id: string | null) => void;
   isFavorites?: boolean;
+  isNearPlaces?: boolean;
 };
 
-const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavorites }) => {
-  const { isPremium, price, title, type, rating, isFavorite } = offer;
-  const ratingPercentage = `${Math.round(rating) * 20}%`;
+const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavorites, isNearPlaces }) => {
+  const { isPremium, price, title, type, isFavorite } = offer;
   const detailUrl = generatePath(AppRoutes.Offer, { offerId: offer.id.toString() });
   const dispatch = useDispatch<AppDispatch>();
   const authorizationStatus = useSelector(selectAuthorizationStatus);
@@ -44,7 +45,13 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavor
     dispatch(toggleFavoriteOnServer({ offerId: offer.id, status: offer.isFavorite ? 0 : 1 }));
   };
 
-  const cardClass = isFavorites ? 'favorites__card place-card' : `cities__card place-card${isActive ? ' place-card--active' : ''}`;
+  let cardClass = `cities__card place-card${isActive ? ' place-card--active' : ''}`;
+  if (isFavorites) {
+    cardClass = 'favorites__card place-card';
+  }
+  if (isNearPlaces) {
+    cardClass = 'near-places__card place-card';
+  }
   const imageWrapperClass = isFavorites ? 'favorites__image-wrapper place-card__image-wrapper' : 'cities__image-wrapper place-card__image-wrapper';
   const infoClass = isFavorites ? 'favorites__card-info place-card__info' : 'place-card__info';
   const imageWidth = isFavorites ? 150 : 260;
@@ -90,7 +97,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavor
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span style={{ width: ratingPercentage }}></span>
+            <span style={{ width: getStarsRating(offer.rating) }}></span>
             <span className="visually-hidden">Rating</span>
           </div>
         </div>

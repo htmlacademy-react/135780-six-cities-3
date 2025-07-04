@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import CommentForm from '../components/CommentForm/comment-form';
 import ReviewList from '../components/Review/review-list';
@@ -13,12 +13,13 @@ import NotFoundPage from './not-found-page';
 import Spinner from '../components/Spinner/spinner';
 import { selectAuthorizationStatus, selectCurrentOffer, selectCurrentOfferLoading, selectNearOffers, selectComments, } from '../store/selectors';
 import FavoriteButton from '../components/FavoriteButton/favorite-button';
+import { getStarsRating } from '../utils/stars-rating';
 
 
 const OfferPage: React.FC = () => {
   const { offerId } = useParams<{ offerId: string }>();
   const dispatch = useDispatch<AppDispatch>();
-  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  // Removed unused activeOfferId state
   const navigate = useNavigate();
   const authorizationStatus = useSelector(selectAuthorizationStatus);
 
@@ -101,7 +102,7 @@ const OfferPage: React.FC = () => {
 
               <div className="offer__rating rating">
                 <div className="offer__stars rating__stars">
-                  <span style={{ width: `${offer.rating * 20}%` }}></span>
+                  <span style={{ width: getStarsRating(offer.rating) }}></span>
                   <span className="visually-hidden">Rating</span>
                 </div>
                 <span className="offer__rating-value rating__value">{offer.rating}</span>
@@ -159,18 +160,16 @@ const OfferPage: React.FC = () => {
           </div>
 
           <section className="offer__map-container container">
-            <Map offers={[offer, ...nearOffers.slice(0, 3)]} activeOfferId={activeOfferId} />
+            <Map offers={[offer, ...nearOffers.slice(0, 3)]} activeOfferId={offer.id} />
           </section>
         </section>
         <div className="container">
-          <section className="near-places places">
-            <h2 className="near-places__title">Other places in the neighbourhood</h2>
-            <OfferList
-              offers={nearbyOffers}
-              onCardHover={setActiveOfferId}
-              className="near-places__list places__list"
-            />
-          </section>
+          <h2 className="near-places__title">Other places in the neighbourhood</h2>
+          <OfferList
+            offers={nearbyOffers}
+            className="near-places__list places__list"
+            isNearPlaces
+          />
         </div>
       </main>
     </div>

@@ -40,9 +40,10 @@ type OfferListProps = {
   onCardHover?: (id: string | null) => void;
   className?: string;
   isFavorites?: boolean;
+  isNearPlaces?: boolean;
 };
 
-const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className, isFavorites }) => (
+const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className, isFavorites, isNearPlaces }) => (
   <div className={`offer-list ${className || ''}`}>
     {offers.map((offer) => (
       <OfferCard
@@ -50,6 +51,7 @@ const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className, i
         offer={offer}
         onHover={onCardHover}
         isFavorites={isFavorites}
+        isNearPlaces={isNearPlaces}
       />
     ))}
   </div>
