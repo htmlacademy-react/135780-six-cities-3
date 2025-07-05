@@ -1,12 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../store/thunks';
 import { selectAuthorizationStatus } from '../store/selectors';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate} from 'react-router-dom';
 import { AppRoutes, cities } from '../constants';
 import type { AppDispatch } from '../store';
 import { setCity } from '../store/reducer';
-import { useEffect } from 'react';
+
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,13 +14,37 @@ const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const authorizationStatus = useSelector(selectAuthorizationStatus);
   const navigate = useNavigate();
-
   const randomCity = useMemo(() => cities[Math.floor(Math.random() * cities.length)], []);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const [isSubmitting] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [enterPressed, setEnterPressed] = useState(false);
 
+  const handlePasswordInput = (event: React.FormEvent<HTMLInputElement>) => {
+    setPassword((event.target as HTMLInputElement).value);
+  };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    dispatch(login({ email, password }));
+  const handlePasswordKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      setEnterPressed(true);
+    }
+  };
+
+  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    // Берём актуальные значения из формы
+    const formData = new FormData(evt.currentTarget);
+    const emailValue = (formData.get('email') as string).trim();
+    const passwordValue = (formData.get('password') as string).trim();
+
+    if (!emailValue || !passwordValue) {
+      return;
+    }
+
+    dispatch(login({ email: emailValue, password: passwordValue }));
   };
 
   const handleCityClick = (event: React.MouseEvent) => {
@@ -29,12 +53,22 @@ const LoginPage: React.FC = () => {
     navigate(AppRoutes.Root);
   };
 
-  //с ним не проходит "Валидация логина и пароля шаг 44", но без него не проходит "При переключении страниц форма очищается" шаг 41
   useEffect(() => {
     if (authorizationStatus === 'AUTH') {
-      navigate(AppRoutes.Root);
+      setTimeout(() => setShouldRedirect(true), 200);
     }
-  }, [authorizationStatus, navigate]);
+  }, [authorizationStatus]);
+
+  useEffect(() => {
+    if (enterPressed) {
+      setEnterPressed(false);
+      formRef.current?.requestSubmit();
+    }
+  }, [password, enterPressed]);
+
+  if (shouldRedirect) {
+    return <Navigate to={AppRoutes.Root} />;
+  }
 
   return (
     <div className="page page--gray page--login">
@@ -42,7 +76,11 @@ const LoginPage: React.FC = () => {
         <div className="page__login-container container">
           <section className="login">
             <h1 className="login__title">Sign in</h1>
-            <form className="login__form form" onSubmit={handleSubmit}>
+            <form
+              ref={formRef}
+              className="login__form form"
+              onSubmit={handleSubmit}
+            >
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">E-mail</label>
                 <input
@@ -58,16 +96,20 @@ const LoginPage: React.FC = () => {
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">Password</label>
                 <input
+                  ref={passwordRef}
                   className="login__input form__input"
                   type="password"
                   name="password"
                   placeholder="Password"
                   required
                   value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$"
+                  onInput={handlePasswordInput}
+                  onKeyDown={handlePasswordKeyDown}
+                  title="Пароль должен содержать хотя бы одну латинскую букву и одну цифру"
                 />
               </div>
-              <button className="login__submit form__submit button" type="submit">Sign in</button>
+              <button className="login__submit form__submit button" type="submit" disabled={isSubmitting}>Sign in</button>
             </form>
           </section>
           <section className="locations locations--login locations--current">

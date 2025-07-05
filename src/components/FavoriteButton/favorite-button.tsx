@@ -16,17 +16,26 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   iconWidth = 31,
   iconHeight = 33,
   children,
-}) => (
-  <button
-    className={`button${isActive ? ' place-card__bookmark-button--active' : ''} ${className}`}
-    type="button"
-    onClick={onClick}
-  >
-    <svg className="offer__bookmark-icon" width={iconWidth} height={iconHeight}>
-      <use xlinkHref="#icon-bookmark"></use>
-    </svg>
-    <span className="visually-hidden">{children || 'To bookmarks'}</span>
-  </button>
-);
+}) => {
+
+  const baseClass = className.trim();
+  const activeClass = isActive ? `${baseClass}--active` : '';
+  const buttonClass = [baseClass, activeClass, 'button'].filter(Boolean).join(' ');
+
+  const iconClass = baseClass.replace('__bookmark-button', '__bookmark-icon');
+
+  return (
+    <button
+      className={buttonClass}
+      type="button"
+      onClick={onClick}
+    >
+      <svg className={iconClass} width={iconWidth} height={iconHeight}>
+        <use xlinkHref="#icon-bookmark"></use>
+      </svg>
+      <span className="visually-hidden">{children || 'To bookmarks'}</span>
+    </button>
+  );
+};
 
 export default FavoriteButton;

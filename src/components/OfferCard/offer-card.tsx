@@ -37,7 +37,6 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavor
 
 
   const handleBookmarkClick = () => {
-    event?.preventDefault();
     if (authorizationStatus !== 'AUTH') {
       navigate(AppRoutes.Login);
       return;
