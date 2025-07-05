@@ -109,7 +109,6 @@ const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
         value={comment}
         onChange={handleCommentChange}
         minLength={ReviewLength.Min}
-        maxLength={ReviewLength.Max}
         disabled={loading}
       />
       <div className="reviews__button-wrapper">
@@ -119,7 +118,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
         <button
           className="reviews__submit form__submit button"
           type="submit"
-          disabled={comment.length < ReviewLength.Min || rating === 0 || loading}
+          disabled={comment.length < ReviewLength.Min || comment.length > ReviewLength.Max || rating === 0 || loading}
         >
           Submit
         </button>

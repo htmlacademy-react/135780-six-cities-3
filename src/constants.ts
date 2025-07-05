@@ -63,3 +63,5 @@ export enum StarsRating {
   FourStars = '80%',
   FiveStars = '100%',
 }
+
+export const MAX_COMMENTS = 10;

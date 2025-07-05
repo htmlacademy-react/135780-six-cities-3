@@ -62,9 +62,7 @@ const OfferPage: React.FC = () => {
   }
 
   const totalCommentsCount = comments.length;
-  const sortedComments = [...comments]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 10);
+
 
   return (
     <div className="page">
@@ -145,7 +143,7 @@ const OfferPage: React.FC = () => {
 
               <section className="offer__reviews reviews">
                 <ReviewList
-                  comments={sortedComments.map((item) => ({
+                  comments={comments.map((item) => ({
                     id: item.id,
                     avatar: item.user.avatarUrl,
                     username: item.user.name,
