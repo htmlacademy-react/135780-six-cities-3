@@ -6,6 +6,16 @@ export type OfferData = {
   title: string;
   type: string;
   price: number;
+  images: string[];
+  goods: string[];
+  description: string;
+  bedrooms: number;
+  maxAdults: number;
+  host: {
+    name: string;
+  avatarUrl: string;
+  isPro: boolean;
+  };
   city: {
     name: string;
     location: {
@@ -29,12 +39,20 @@ type OfferListProps = {
   offers: OfferData[];
   onCardHover?: (id: string | null) => void;
   className?: string;
+  isFavorites?: boolean;
+  isNearPlaces?: boolean;
 };
 
-const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className }) => (
+const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className, isFavorites, isNearPlaces }) => (
   <div className={`offer-list ${className || ''}`}>
     {offers.map((offer) => (
-      <OfferCard key={offer.id} offer={offer} onHover={onCardHover || (() => {})}/>
+      <OfferCard
+        key={offer.id}
+        offer={offer}
+        onHover={onCardHover}
+        isFavorites={isFavorites}
+        isNearPlaces={isNearPlaces}
+      />
     ))}
   </div>
 );

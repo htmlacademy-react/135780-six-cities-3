@@ -1,6 +1,13 @@
 import React from 'react';
-import { Link, generatePath } from 'react-router-dom';
+import { Link, generatePath, useNavigate } from 'react-router-dom';
 import { AppRoutes } from '../../constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleFavoriteOnServer } from '../../store/thunks';
+import { selectAuthorizationStatus } from '../../store/selectors';
+import type { AppDispatch } from '../../store';
+import FavoriteButton from '../FavoriteButton/favorite-button';
+import { getStarsRating } from '../../utils/stars-rating';
+
 
 type Offer = {
   id: string;
@@ -10,57 +17,86 @@ type Offer = {
   type: string;
   rating: number;
   previewImage: string;
+  isFavorite: boolean;
 };
 
 type OfferCardProps = {
   offer: Offer;
   isActive?: boolean;
-  onHover: (id: string | null) => void;
+  onHover?: (id: string | null) => void;
+  isFavorites?: boolean;
+  isNearPlaces?: boolean;
 };
 
-const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover }) => {
-  const { isPremium, price, title, type, rating } = offer;
-  const ratingPercentage = `${Math.round(rating) * 20}%`;
+const OfferCard: React.FC<OfferCardProps> = ({ offer, isActive, onHover, isFavorites, isNearPlaces }) => {
+  const { isPremium, price, title, type, isFavorite } = offer;
   const detailUrl = generatePath(AppRoutes.Offer, { offerId: offer.id.toString() });
+  const dispatch = useDispatch<AppDispatch>();
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const navigate = useNavigate();
+
+
+  const handleBookmarkClick = () => {
+    if (authorizationStatus !== 'AUTH') {
+      navigate(AppRoutes.Login);
+      return;
+    }
+    dispatch(toggleFavoriteOnServer({ offerId: offer.id, status: offer.isFavorite ? 0 : 1 }));
+  };
+
+  let cardClass = `cities__card place-card${isActive ? ' place-card--active' : ''}`;
+  if (isFavorites) {
+    cardClass = 'favorites__card place-card';
+  }
+  if (isNearPlaces) {
+    cardClass = 'near-places__card place-card';
+  }
+  const imageWrapperClass = isFavorites ? 'favorites__image-wrapper place-card__image-wrapper' : 'cities__image-wrapper place-card__image-wrapper';
+  const infoClass = isFavorites ? 'favorites__card-info place-card__info' : 'place-card__info';
+  const imageWidth = isFavorites ? 150 : 260;
+  const imageHeight = isFavorites ? 110 : 200;
 
   return (
     <article
-      className={`cities__card place-card${isActive ? ' place-card--active' : ''}`}
-      onMouseEnter={() => onHover(offer.id.toString())}
-      onMouseLeave={() => onHover(null)}
+      className={cardClass}
+      onMouseEnter={() => onHover?.(offer.id.toString())}
+      onMouseLeave={() => onHover?.(null)}
     >
       {isPremium && (
         <div className="place-card__mark">
           <span>Premium</span>
         </div>
       )}
-      <div className="cities__image-wrapper place-card__image-wrapper">
+      <div className={imageWrapperClass}>
         <Link to={detailUrl}>
           <img
             className="place-card__image"
             src={offer.previewImage}
-            width="260"
-            height="200"
+            width={imageWidth}
+            height={imageHeight}
             alt="Place image"
           />
         </Link>
       </div>
-      <div className="place-card__info">
+      <div className={infoClass}>
         <div className="place-card__price-wrapper">
           <div className="place-card__price">
             <b className="place-card__price-value">&euro;{price}</b>
             <span className="place-card__price-text">&#47;&nbsp;night</span>
           </div>
-          <button className="place-card__bookmark-button button" type="button">
-            <svg className="place-card__bookmark-icon" width="18" height="19">
-              <use xlinkHref="#icon-bookmark"></use>
-            </svg>
-            <span className="visually-hidden">To bookmarks</span>
-          </button>
+          <FavoriteButton
+            isActive={isFavorite}
+            onClick={handleBookmarkClick}
+            className="place-card__bookmark-button"
+            iconWidth={18}
+            iconHeight={19}
+          >
+            {isFavorites ? 'In bookmarks' : 'To bookmarks'}
+          </FavoriteButton>
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span style={{ width: ratingPercentage }}></span>
+            <span style={{ width: getStarsRating(offer.rating) }}></span>
             <span className="visually-hidden">Rating</span>
           </div>
         </div>

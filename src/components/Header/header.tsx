@@ -2,20 +2,33 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectAuthorizationStatus, selectUser } from '../../store/selectors';
-import { logout } from '../../store/reducer';
 import { AppRoutes } from '../../constants';
+import { logoutAndReset } from '../../store/thunks';
+import type { AppDispatch } from '../../store/index';
 
-
-const Header: React.FC = () => {
-  const dispatch = useDispatch();
+const Header: React.FC = React.memo(() => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const authorizationStatus = useSelector(selectAuthorizationStatus);
   const user = useSelector(selectUser);
 
-  const handleLogout = (e: React.MouseEvent) => {
-    e.preventDefault();
-    localStorage.removeItem('six-cities-token');
-    dispatch(logout());
+  type Offer = {
+    id: number;
+    isFavorite: boolean;
+  };
+
+  type RootState = {
+    offers: Offer[];
+    favorites: Offer[];
+  };
+
+  const favoriteCount = useSelector((state: RootState) =>
+    Array.isArray(state.favorites) ? state.favorites.length : 0
+  );
+
+  const handleLogout = (event: React.MouseEvent) => {
+    event.preventDefault();
+    dispatch(logoutAndReset());
     navigate(AppRoutes.Login);
   };
 
@@ -39,6 +52,7 @@ const Header: React.FC = () => {
                       </div>
                       <span className="header__user-name user__name">{user.email}</span>
                     </Link>
+                    <span className="header__favorite-count">{favoriteCount}</span>
                   </li>
                   <li className="header__nav-item">
                     <button className="header__nav-link" onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
@@ -59,6 +73,8 @@ const Header: React.FC = () => {
       </div>
     </header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

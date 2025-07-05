@@ -1,4 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { useDispatch } from 'react-redux';
+import { postComment } from '../../store/thunks';
+import type { AppDispatch } from '../../store';
 
 const ratingTitles: Record<number, string> = {
   5: 'perfect',
@@ -8,26 +11,68 @@ const ratingTitles: Record<number, string> = {
   1: 'terribly',
 };
 
-const CommentForm: React.FC = () => {
+type CommentFormProps = {
+  offerId: string;
+};
+
+export const ReviewLength = {
+  Min: 50,
+  Max: 300,
+} as const;
+
+const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setComment(e.target.value);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleCommentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(event.target.value);
   };
 
-  const handleRatingChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setRating(Number(e.target.value));
+  const handleRatingChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setRating(Number(event.target.value));
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setComment('');
-    setRating(0);
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    const idToUse = offerId;
+    if (!idToUse) {
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      await dispatch(
+        postComment({
+          offerId: idToUse,
+          data: { comment, rating },
+        })
+      ).unwrap();
+      setComment('');
+      setRating(0);
+    } catch (err: unknown) {
+      if (typeof err === 'string') {
+        setError(err);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Ошибка отправки комментария');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form className="reviews__form form" onSubmit={handleSubmit}>
+    <form
+      className="reviews__form form"
+      onSubmit={(event) => {
+        handleSubmit(event);
+      }}
+    >
       <label className="reviews__label form__label" htmlFor="review">
         Your review
       </label>
@@ -42,6 +87,7 @@ const CommentForm: React.FC = () => {
               type="radio"
               checked={rating === star}
               onChange={handleRatingChange}
+              disabled={loading}
             />
             <label
               htmlFor={`${star}-stars`}
@@ -62,6 +108,8 @@ const CommentForm: React.FC = () => {
         placeholder="Tell how was your stay, what you like and what can be improved"
         value={comment}
         onChange={handleCommentChange}
+        minLength={ReviewLength.Min}
+        disabled={loading}
       />
       <div className="reviews__button-wrapper">
         <p className="reviews__help">
@@ -70,11 +118,12 @@ const CommentForm: React.FC = () => {
         <button
           className="reviews__submit form__submit button"
           type="submit"
-          disabled={comment.length < 50 || rating === 0}
+          disabled={comment.length < ReviewLength.Min || comment.length > ReviewLength.Max || rating === 0 || loading}
         >
           Submit
         </button>
       </div>
+      {error && <div className="form__error">{error}</div>}
     </form>
   );
 };

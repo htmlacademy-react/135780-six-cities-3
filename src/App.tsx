@@ -7,9 +7,12 @@ import LoginPage from './pages/login-page';
 import OfferPage from './pages/offer-page';
 import PrivateRoute from './components/PrivateRoute/private-route';
 import { AppRoutes } from './constants';
-//замена Pages на pages
+import Header from './components/Header/header';
+
+
 const App: React.FC = () => (
   <BrowserRouter>
+    <Header />
     <Routes>
       <Route path={AppRoutes.Root} element={<MainPage />} />
       <Route path={AppRoutes.Login} element={<LoginPage />} />
@@ -17,12 +20,13 @@ const App: React.FC = () => (
         path={AppRoutes.Favorites}
         element={
           <PrivateRoute>
-            <FavoritesPage offers={[]} />
+            <FavoritesPage />
           </PrivateRoute>
         }
       />
       <Route path={AppRoutes.Offer} element={<OfferPage />} />
       <Route path={AppRoutes.NotFound} element={<NotFoundPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   </BrowserRouter>
 );

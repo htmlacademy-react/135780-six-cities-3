@@ -1,6 +1,7 @@
 import { OfferData } from '../components/OfferList/offer-list';
-import { fetchOffers } from './thunks';
+import { fetchOffers, fetchOffer, fetchNearOffers, fetchComments, toggleFavoriteOnServer, fetchFavorites } from './thunks';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ReviewData } from '../types/review';
 
 // Тип состояния приложения
 export type User = {
@@ -18,6 +19,18 @@ export type State = {
   offersError: string | null;
   authorizationStatus: 'AUTH' | 'NO_AUTH' | 'UNKNOWN';
   user: User | null;
+  currentOffer: OfferData | null;
+  currentOfferLoading: boolean;
+  currentOfferError: string | null;
+  nearOffers: OfferData[];
+  nearOffersLoading: boolean;
+  nearOffersError: string | null;
+  comments: ReviewData[];
+  commentsLoading: boolean;
+  commentsError: string | null;
+  favorites: OfferData[];
+  favoritesLoading: boolean;
+  favoritesError: string | null;
 };
 
 // Начальное состояние
@@ -28,12 +41,38 @@ export const initialState: State = {
   offersError: null,
   authorizationStatus: 'UNKNOWN',
   user: null,
+  currentOffer: null,
+  currentOfferLoading: false,
+  currentOfferError: null,
+  nearOffers: [],
+  nearOffersLoading: false,
+  nearOffersError: null,
+  comments: [],
+  commentsLoading: false,
+  commentsError: null,
+  favorites: [],
+  favoritesLoading: false,
+  favoritesError: null,
 };
 
 const mainSlice = createSlice({
   name: 'main',
   initialState,
   reducers: {
+    toggleFavorite(state, action: PayloadAction<string>) {
+      const offerItem = state.offers.find((item) => item.id === action.payload);
+      if (offerItem) {
+        offerItem.isFavorite = !offerItem.isFavorite;
+      }
+      if (state.currentOffer && state.currentOffer.id === action.payload) {
+        state.currentOffer.isFavorite = !state.currentOffer.isFavorite;
+      }
+    },
+    resetOffer(state) {
+      state.currentOffer = null;
+      state.currentOfferError = null;
+      state.currentOfferLoading = false;
+    },
     setCity(state, action: PayloadAction<string>) {
       state.city = action.payload;
     },
@@ -46,10 +85,65 @@ const mainSlice = createSlice({
     logout(state) {
       state.authorizationStatus = 'NO_AUTH';
       state.user = null;
+      state.favorites = [];
+      state.offers = [];
     },
+
   },
+
   extraReducers: (builder) => {
     builder
+      .addCase(fetchFavorites.pending, (state) => {
+        state.favoritesLoading = true;
+        state.favoritesError = null;
+      })
+
+      .addCase(fetchFavorites.rejected, (state, action) => {
+        state.favoritesLoading = false;
+        state.favoritesError = action.payload as string;
+      })
+      .addCase(toggleFavoriteOnServer.fulfilled, (state, action) => {
+        const offerId = action.payload;
+        // Меняем isFavorite в offers
+        const offer = state.offers.find((o) => o.id === offerId);
+        if (offer) {
+          offer.isFavorite = !offer.isFavorite;
+          if (offer.isFavorite) {
+            // Добавляем в избранное, если ещё нет
+            if (!state.favorites.find((fav) => fav.id === offerId)) {
+              state.favorites.push({ ...offer });
+            }
+          } else {
+            // Удаляем из избранного
+            state.favorites = state.favorites.filter((fav) => fav.id !== offerId);
+          }
+        } else {
+          // Если оффера нет в offers ищем в favorites
+          const favOffer = state.favorites.find((fav) => fav.id === offerId);
+          if (favOffer) {
+            favOffer.isFavorite = !favOffer.isFavorite;
+            if (!favOffer.isFavorite) {
+              state.favorites = state.favorites.filter((fav) => fav.id !== offerId);
+            }
+          }
+        }
+        // Меняем isFavorite в currentOffer
+        if (state.currentOffer && state.currentOffer.id === offerId) {
+          state.currentOffer.isFavorite = offer ? offer.isFavorite : false;
+        }
+      })
+      .addCase(fetchFavorites.fulfilled, (state, action) => {
+        state.favoritesLoading = false;
+        state.favorites = action.payload;
+        // Синхронизируем isFavorite во всех offers
+        const favoriteIds = new Set(action.payload.map((o) => o.id));
+        state.offers.forEach((offer) => {
+          offer.isFavorite = favoriteIds.has(offer.id);
+        });
+        if (state.currentOffer) {
+          state.currentOffer.isFavorite = favoriteIds.has(state.currentOffer.id);
+        }
+      })
       .addCase(fetchOffers.pending, (state) => {
         state.offersLoading = true;
         state.offersError = null;
@@ -61,10 +155,46 @@ const mainSlice = createSlice({
       .addCase(fetchOffers.rejected, (state, action) => {
         state.offersLoading = false;
         state.offersError = action.payload as string;
+      })
+      .addCase(fetchOffer.pending, (state) => {
+        state.currentOfferLoading = true;
+        state.currentOfferError = null;
+      })
+      .addCase(fetchOffer.fulfilled, (state, action) => {
+        state.currentOfferLoading = false;
+        state.currentOffer = action.payload;
+      })
+      .addCase(fetchOffer.rejected, (state, action) => {
+        state.currentOfferLoading = false;
+        state.currentOfferError = action.payload as string;
+      })
+      .addCase(fetchNearOffers.pending, (state) => {
+        state.nearOffersLoading = true;
+        state.nearOffersError = null;
+      })
+      .addCase(fetchNearOffers.fulfilled, (state, action) => {
+        state.nearOffersLoading = false;
+        state.nearOffers = action.payload;
+      })
+      .addCase(fetchNearOffers.rejected, (state, action) => {
+        state.nearOffersLoading = false;
+        state.nearOffersError = action.payload as string;
+      })
+      .addCase(fetchComments.pending, (state) => {
+        state.commentsLoading = true;
+        state.commentsError = null;
+      })
+      .addCase(fetchComments.fulfilled, (state, action: PayloadAction<ReviewData[]>) => {
+        state.commentsLoading = false;
+        state.commentsError = null;
+        state.comments = action.payload;
+      })
+      .addCase(fetchComments.rejected, (state, action) => {
+        state.commentsLoading = false;
+        state.commentsError = action.payload as string;
       });
   },
 });
 
-export const { setCity, setAuthorizationStatus, setUser, logout } = mainSlice.actions;
+export const { toggleFavorite, resetOffer, setCity, setAuthorizationStatus, setUser, logout } = mainSlice.actions;
 export default mainSlice.reducer;
-
