@@ -1,4 +1,3 @@
-import React from 'react';
 import Review from './review';
 
 export type ReviewData = {
@@ -12,10 +11,11 @@ export type ReviewData = {
 
 type ReviewListProps = {
   comments: ReviewData[];
-  totalCommentsCount?: number;
+  totalCommentsCount: number;
 };
 
 const MAX_COMMENTS = 10;
+
 
 function sortByDate(comments: ReviewData[]) {
   return [...comments]
@@ -23,13 +23,13 @@ function sortByDate(comments: ReviewData[]) {
     .slice(0, MAX_COMMENTS);
 }
 
-const ReviewList: React.FC<ReviewListProps> = ({ comments, totalCommentsCount }) => {
+function ReviewList ({ comments, totalCommentsCount }: ReviewListProps) {
   const sortedComments = sortByDate(comments);
 
   return (
     <section className="offer__reviews reviews">
       <h2 className="reviews__title">
-        Отзывы · <span className="reviews__amount">{totalCommentsCount ?? comments.length}</span>
+        Отзывы · <span className="reviews__amount">{totalCommentsCount}</span>
       </h2>
       <ul className="reviews__list">
         {sortedComments.map((comment) => (
@@ -38,6 +38,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ comments, totalCommentsCount })
       </ul>
     </section>
   );
-};
+}
 
 export default ReviewList;

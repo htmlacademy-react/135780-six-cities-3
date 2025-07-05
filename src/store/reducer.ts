@@ -186,6 +186,7 @@ const mainSlice = createSlice({
       })
       .addCase(fetchComments.fulfilled, (state, action: PayloadAction<ReviewData[]>) => {
         state.commentsLoading = false;
+        state.commentsError = null;
         state.comments = action.payload;
       })
       .addCase(fetchComments.rejected, (state, action) => {

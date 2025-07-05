@@ -61,8 +61,6 @@ const OfferPage: React.FC = () => {
     return <NotFoundPage />;
   }
 
-  const totalCommentsCount = comments.length;
-
 
   return (
     <div className="page">
@@ -151,7 +149,7 @@ const OfferPage: React.FC = () => {
                     text: item.comment,
                     date: item.date,
                   }))}
-                  totalCommentsCount={totalCommentsCount}
+                  totalCommentsCount={comments.length}
                 />
                 {authorizationStatus === 'AUTH' && <CommentForm offerId={offer.id} />}
               </section>
