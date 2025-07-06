@@ -17,9 +17,9 @@ type ReviewListProps = {
 const MAX_COMMENTS = 10;
 
 
-function sortByDate(comments: ReviewData[]) {
-  return [...comments]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+function sortByDate(reviews: ReviewData[]) {
+  return [...reviews]
+    .sort((firstReview, secondReview) => new Date(secondReview.date).getTime() - new Date(firstReview.date).getTime())
     .slice(0, MAX_COMMENTS);
 }
 
