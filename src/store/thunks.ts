@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState, AppThunkExtra } from './index';
 import { setAuthorizationStatus, setUser, logout } from './reducer';
-import { OfferData } from '../components/offerlist/offer-list';
+import { OfferData } from '../components/offer-list/offer-list';
 import { ReviewData } from '../types/review';
 
 type UserResponse = {
@@ -120,24 +120,23 @@ type NewComment = {
 };
 
 export const postComment = createAsyncThunk<
-  void,
+  Comment[],
   { offerId: string; data: NewComment },
-  { state: RootState; extra: AppThunkExtra }
+  { state: RootState; extra: AppThunkExtra; rejectValue: string }
 >(
   'comments/postComment',
   async ({ offerId, data }, { dispatch, rejectWithValue, extra: api }) => {
     try {
-      await api.post(
+      const resp = await api.post<Comment[]>(
         `/comments/${offerId}`,
-        data
+        data,
+        { validateStatus: (s) => s >= 200 && s < 300 }
       );
       dispatch(fetchComments(offerId));
-    } catch (error: unknown) {
-      return rejectWithValue(
-        typeof error === 'object' && error !== null && 'response' in error
-          ? (error as { response: { data?: { message?: string } } }).response.data?.message || 'Ошибка отправки комментария'
-          : 'Ошибка отправки комментария'
-      );
+      return resp.data;
+
+    } catch {
+      return rejectWithValue('Ошибка отправки комментария');
     }
   }
 );

@@ -1,7 +1,8 @@
-import { OfferData } from '../components/offerlist/offer-list';
+import { OfferData } from '../components/offer-list/offer-list';
 import { fetchOffers, fetchOffer, fetchNearOffers, fetchComments, toggleFavoriteOnServer, fetchFavorites } from './thunks';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ReviewData } from '../types/review';
+import { postComment } from './thunks';
 
 // Тип состояния приложения
 export type User = {
@@ -28,6 +29,8 @@ export type State = {
   comments: ReviewData[];
   commentsLoading: boolean;
   commentsError: string | null;
+  isPostingComment: boolean;
+  postCommentError: string | null;
   favorites: OfferData[];
   favoritesLoading: boolean;
   favoritesError: string | null;
@@ -50,6 +53,8 @@ export const initialState: State = {
   comments: [],
   commentsLoading: false,
   commentsError: null,
+  isPostingComment: false,
+  postCommentError: null,
   favorites: [],
   favoritesLoading: false,
   favoritesError: null,
@@ -186,7 +191,20 @@ const mainSlice = createSlice({
       .addCase(fetchComments.rejected, (state, action) => {
         state.commentsLoading = false;
         state.commentsError = action.payload as string;
+      })
+      .addCase(postComment.pending, (state) => {
+        state.isPostingComment = true;
+        state.postCommentError = null;
+      })
+      .addCase(postComment.fulfilled, (state) => {
+        state.isPostingComment = false;
+        state.postCommentError = null;
+      })
+      .addCase(postComment.rejected, (state, action) => {
+        state.isPostingComment = false;
+        state.postCommentError = action.payload as string;
       });
+
   },
 });
 

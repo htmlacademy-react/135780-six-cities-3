@@ -1,5 +1,5 @@
 import React from 'react';
-import OfferCard from '../offercard/offer-card';
+import OfferCard from '../offer-card/offer-card';
 
 export type OfferData = {
    id: string;

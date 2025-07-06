@@ -1,7 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { postComment } from '../../store/thunks';
-import type { AppDispatch } from '../../store';
+import type { AppDispatch, RootState } from '../../store';
+
 
 const ratingTitles: Record<number, string> = {
   5: 'perfect',
@@ -23,10 +24,11 @@ export const ReviewLength = {
 const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const isPosting = useSelector((state: RootState) => state.isPostingComment);
+  const postError = useSelector((state: RootState) => state.postCommentError);
 
   const dispatch = useDispatch<AppDispatch>();
+
 
   const handleCommentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setComment(event.target.value);
@@ -36,33 +38,19 @@ const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
     setRating(Number(event.target.value));
   };
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    const idToUse = offerId;
-    if (!idToUse) {
+  const handleSubmit = async (evt: FormEvent) => {
+    evt.preventDefault();
+    if (!offerId) {
       return;
     }
-    setLoading(true);
-    setError(null);
     try {
       await dispatch(
-        postComment({
-          offerId: idToUse,
-          data: { comment, rating },
-        })
+        postComment({ offerId, data: { comment, rating } })
       ).unwrap();
       setComment('');
       setRating(0);
-    } catch (err: unknown) {
-      if (typeof err === 'string') {
-        setError(err);
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Ошибка отправки комментария');
-      }
-    } finally {
-      setLoading(false);
+    } catch (_) {
+      // Ошибка уже обработана в thunk
     }
   };
 
@@ -87,7 +75,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
               type="radio"
               checked={rating === star}
               onChange={handleRatingChange}
-              disabled={loading}
+              disabled={isPosting}
             />
             <label
               htmlFor={`${star}-stars`}
@@ -109,7 +97,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
         value={comment}
         onChange={handleCommentChange}
         minLength={ReviewLength.Min}
-        disabled={loading}
+        disabled={isPosting}
       />
       <div className="reviews__button-wrapper">
         <p className="reviews__help">
@@ -118,12 +106,12 @@ const CommentForm: React.FC<CommentFormProps> = ({ offerId }) => {
         <button
           className="reviews__submit form__submit button"
           type="submit"
-          disabled={comment.length < ReviewLength.Min || comment.length > ReviewLength.Max || rating === 0 || loading}
+          disabled={comment.length < ReviewLength.Min || comment.length > ReviewLength.Max || rating === 0 || isPosting}
         >
           Submit
         </button>
       </div>
-      {error && <div className="form__error">{error}</div>}
+      {postError && <div className="form__error">{postError}</div>}
     </form>
   );
 };

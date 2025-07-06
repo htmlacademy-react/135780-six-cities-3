@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import CommentForm from '../components/commentform/comment-form';
+import CommentForm from '../components/comment-form/comment-form';
 import ReviewList from '../components/review/review-list';
 import Map from '../components/map/map';
-import OfferList from '../components/offerlist/offer-list';
+import OfferList from '../components/offer-list/offer-list';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOffer, fetchNearOffers, fetchComments, toggleFavoriteOnServer } from '../store/thunks';
 import { AppDispatch } from '../store';
@@ -12,7 +12,7 @@ import { AppRoutes } from '../constants';
 import NotFoundPage from './not-found-page';
 import Spinner from '../components/spinner/spinner';
 import { selectAuthorizationStatus, selectCurrentOffer, selectCurrentOfferLoading, selectNearOffers, selectComments, } from '../store/selectors';
-import FavoriteButton from '../components/favoritebutton/favorite-button';
+import FavoriteButton from '../components/favorite-button/favorite-button';
 import { getStarsRating } from '../utils/stars-rating';
 
 
@@ -151,7 +151,7 @@ const OfferPage: React.FC = () => {
                   }))}
                   totalCommentsCount={comments.length}
                 />
-                {authorizationStatus === 'AUTH' && <CommentForm offerId={offer.id} />}
+                {authorizationStatus === 'AUTH' && <CommentForm offerId={offer.id} key="comment-form"/>}
               </section>
             </div>
           </div>

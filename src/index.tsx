@@ -5,10 +5,7 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import { fetchOffers, checkAuth, fetchFavorites } from './store/thunks';
 
-// Сначала грузим офферы
 store.dispatch(fetchOffers());
-
-// Проверяем авторизацию и, если авторизован, грузим избранное
 store.dispatch(checkAuth()).then(() => {
   if (store.getState().authorizationStatus === 'AUTH') {
     store.dispatch(fetchFavorites());
