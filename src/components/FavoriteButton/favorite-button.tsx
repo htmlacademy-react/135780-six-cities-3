@@ -18,7 +18,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   children,
 }) => {
 
-  const baseClass = className.trim();
+  const baseClass = className.trim().replace(' button', '');
   const activeClass = isActive ? `${baseClass}--active` : '';
   const buttonClass = [baseClass, activeClass, 'button'].filter(Boolean).join(' ');
 
