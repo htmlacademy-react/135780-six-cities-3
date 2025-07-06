@@ -151,7 +151,7 @@ const OfferPage: React.FC = () => {
                   }))}
                   totalCommentsCount={comments.length}
                 />
-                {authorizationStatus === 'AUTH' && <CommentForm offerId={offer.id} />}
+                {authorizationStatus === 'AUTH' && <CommentForm offerId={offer.id} key="comment-form"/>}
               </section>
             </div>
           </div>
