@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState, AppThunkExtra } from './index';
 import { setAuthorizationStatus, setUser, logout } from './reducer';
-import { OfferData } from '../components/OfferList/offer-list';
+import { OfferData } from '../components/offerlist/offer-list';
 import { ReviewData } from '../types/review';
 
 type UserResponse = {

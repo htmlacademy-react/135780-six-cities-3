@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import useMap from '../../hooks/use-map';
-import { OfferData } from '../OfferList/offer-list';
+import { OfferData } from '../offerlist/offer-list';
 
 type Location = {
   latitude: number;

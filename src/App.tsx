@@ -5,9 +5,9 @@ import NotFoundPage from './pages/not-found-page';
 import FavoritesPage from './pages/favorite-page';
 import LoginPage from './pages/login-page';
 import OfferPage from './pages/offer-page';
-import PrivateRoute from './components/PrivateRoute/private-route';
+import PrivateRoute from './components/privateroute/private-route';
 import { AppRoutes } from './constants';
-import Header from './components/Header/header';
+import Header from './components/header/header';
 
 
 const App: React.FC = () => (

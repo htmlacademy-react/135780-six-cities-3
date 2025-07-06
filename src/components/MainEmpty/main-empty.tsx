@@ -1,5 +1,5 @@
 import React from 'react';
-import CitiesList from '../CitiesList/cities-list';
+import CitiesList from '../citieslist/cities-list';
 import { cities } from '../../constants';
 
 type MainEmptyProps = {

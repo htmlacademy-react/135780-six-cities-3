@@ -1,5 +1,5 @@
 import { RootState } from './index';
-import { OfferData } from '../components/OfferList/offer-list';
+import { OfferData } from '../components/offerlist/offer-list';
 import { createSelector } from '@reduxjs/toolkit';
 
 
@@ -12,7 +12,6 @@ export const selectAuthorizationStatus = (state: RootState) => state.authorizati
 export const selectUser = (state: RootState) => state.user;
 export const selectCurrentOffer = (state: RootState) => state.currentOffer;
 export const selectCurrentOfferLoading = (state: RootState) => state.currentOfferLoading;
-export const selectCurrentOfferError = (state: RootState) => state.currentOfferError;
 export const selectNearOffers = (state: RootState) => state.nearOffers;
 export const selectComments = (state: RootState) => state.comments;
 export const selectFavorites = (state: RootState) => state.favorites;

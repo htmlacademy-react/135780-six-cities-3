@@ -1,4 +1,4 @@
-import Review from './review';
+import Review from '../review/review';
 
 export type ReviewData = {
   id: string;

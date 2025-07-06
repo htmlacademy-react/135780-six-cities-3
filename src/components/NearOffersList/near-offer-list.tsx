@@ -1,6 +1,6 @@
 import React from 'react';
-import OfferCard from '../OfferCard/offer-card';
-import { OfferData } from '../OfferList/offer-list';
+import OfferCard from '../offercard/offer-card';
+import { OfferData } from '../offerlist/offer-list';
 
 type NearOfferListProps = {
   offers: OfferData[];

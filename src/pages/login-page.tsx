@@ -35,7 +35,6 @@ const LoginPage: React.FC = () => {
   const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    // Берём актуальные значения из формы
     const formData = new FormData(evt.currentTarget);
     const emailValue = (formData.get('email') as string).trim();
     const passwordValue = (formData.get('password') as string).trim();

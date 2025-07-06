@@ -1,15 +1,15 @@
 import React from 'react';
-import OfferList, { OfferData } from '../components/OfferList/offer-list';
+import OfferList, { OfferData } from '../components/offerlist/offer-list';
 import Map from '../components/map/map';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectOffersByCity, selectCity, selectOffersLoading, selectOffersError} from '../store/selectors';
-import CitiesList from '../components/CitiesList/cities-list';
+import CitiesList from '../components/citieslist/cities-list';
 import { setCity } from '../store/reducer';
-import SortOptions from '../components/SortOptions/sort-options';
-import Spinner from '../components/Spinner/spinner';
+import SortOptions from '../components/sortoptions/sort-options';
+import Spinner from '../components/spinner/spinner';
 import { getSortedOffers, SortType } from '../utils/sort-offers';
 import { cities } from '../constants';
-import MainEmpty from '../components/MainEmpty/main-empty';
+import MainEmpty from '../components/mainempty/main-empty';
 import type { AppDispatch } from '../store';
 
 const MainPage: React.FC = () => {

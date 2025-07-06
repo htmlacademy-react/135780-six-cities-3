@@ -18,7 +18,6 @@ export const createAPI = (): AxiosInstance => {
     return config;
   });
 
-  // Пример перехватчика для 401
   api.interceptors.response.use(
     (response) => response,
     (error: unknown) => {
@@ -28,9 +27,8 @@ export const createAPI = (): AxiosInstance => {
         'response' in error &&
         (error as { response?: { status?: number } }).response?.status === 401
       ) {
-        // Можно обработать глобально
+        return Promise.reject(error);
       }
-      return Promise.reject(error);
     }
   );
 
