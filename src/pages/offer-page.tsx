@@ -9,7 +9,7 @@ import { fetchOffer, fetchNearOffers, fetchComments } from '../store/thunks';
 import { RootState, AppDispatch } from '../store';
 import Header from '../components/Header/header';
 import { Navigate } from 'react-router-dom';
-import { resetOffer } from '../store/reducer';
+import { resetOffer, toggleFavorite } from '../store/reducer';
 import { AppRoutes } from '../constants';
 import Spinner from '../components/Spinner/spinner';
 
@@ -72,7 +72,11 @@ const OfferPage: React.FC = () => {
 
               <div className="offer__name-wrapper">
                 <h1 className="offer__name">{offer.title}</h1>
-                <button className={`offer__bookmark-button button${offer.isFavorite ? ' offer__bookmark-button--active' : ''}`} type="button">
+                <button
+                  className={`offer__bookmark-button button${offer.isFavorite ? ' offer__bookmark-button--active' : ''}`}
+                  type="button"
+                  onClick={() => dispatch(toggleFavorite(offer.id))}
+                >
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark"></use>
                   </svg>
