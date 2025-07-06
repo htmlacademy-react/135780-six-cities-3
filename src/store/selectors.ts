@@ -1,5 +1,5 @@
 import { RootState } from './index';
-import { OfferData } from '../components/offerlist/offer-list';
+import { OfferData } from '../components/offer-list/offer-list';
 import { createSelector } from '@reduxjs/toolkit';
 
 

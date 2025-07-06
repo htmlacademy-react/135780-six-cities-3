@@ -1,4 +1,4 @@
-import { OfferData } from '../components/offerlist/offer-list';
+import { OfferData } from '../components/offer-list/offer-list';
 
 export type SortType = 'Popular' | 'PriceLowToHigh' | 'PriceHighToLow' | 'TopRatedFirst';
 

@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import OfferList, { OfferData } from '../components/offerlist/offer-list';
+import OfferList, { OfferData } from '../components/offer-list/offer-list';
 import { AppDispatch } from '../store';
 import { Link, useNavigate } from 'react-router-dom';
 import { setCity } from '../store/reducer';
@@ -8,7 +8,7 @@ import { AppRoutes } from '../constants';
 import { fetchFavorites } from '../store/thunks';
 import Spinner from '../components/spinner/spinner';
 import { selectFavorites, selectFavoritesLoading, selectFavoritesError } from '../store/selectors';
-import FavoritesEmpty from '../components/favoritesempty/favorites-empty';
+import FavoritesEmpty from '../components/favorites-empty/favorites-empty';
 import Footer from '../components/footer/footer';
 
 const FavoritesPage: React.FC = () => {

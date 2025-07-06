@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleFavoriteOnServer } from '../../store/thunks';
 import { selectAuthorizationStatus } from '../../store/selectors';
 import type { AppDispatch } from '../../store';
-import FavoriteButton from '../favoritebutton/favorite-button';
+import FavoriteButton from '../favorite-button/favorite-button';
 import { getStarsRating } from '../../utils/stars-rating';
 
 

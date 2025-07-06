@@ -1,4 +1,4 @@
-import { OfferData } from '../components/offerlist/offer-list';
+import { OfferData } from '../components/offer-list/offer-list';
 import { fetchOffers, fetchOffer, fetchNearOffers, fetchComments, toggleFavoriteOnServer, fetchFavorites } from './thunks';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ReviewData } from '../types/review';
