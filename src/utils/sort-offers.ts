@@ -1,16 +1,16 @@
-import { OfferData } from '../components/OfferList/offer-list';
+import { OfferData } from '../components/offerlist/offer-list';
 
 export type SortType = 'Popular' | 'PriceLowToHigh' | 'PriceHighToLow' | 'TopRatedFirst';
 
-export function getSortedOffers(offers: OfferData[], sortType: SortType): OfferData[] {
-  switch (sortType) {
+export function getSortedOffers(offerList: OfferData[], selectedSortType: SortType): OfferData[] {
+  switch (selectedSortType) {
     case 'PriceLowToHigh':
-      return [...offers].sort((a, b) => a.price - b.price);
+      return [...offerList].sort((firstOffer, secondOffer) => firstOffer.price - secondOffer.price);
     case 'PriceHighToLow':
-      return [...offers].sort((a, b) => b.price - a.price);
+      return [...offerList].sort((firstOffer, secondOffer) => secondOffer.price - firstOffer.price);
     case 'TopRatedFirst':
-      return [...offers].sort((a, b) => b.rating - a.rating);
+      return [...offerList].sort((firstOffer, secondOffer) => secondOffer.rating - firstOffer.rating);
     default:
-      return offers;
+      return offerList;
   }
 }

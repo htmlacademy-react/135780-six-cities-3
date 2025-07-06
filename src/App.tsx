@@ -5,11 +5,14 @@ import NotFoundPage from './pages/not-found-page';
 import FavoritesPage from './pages/favorite-page';
 import LoginPage from './pages/login-page';
 import OfferPage from './pages/offer-page';
-import PrivateRoute from './components/PrivateRoute/private-route';
+import PrivateRoute from './components/privateroute/private-route';
 import { AppRoutes } from './constants';
+import Header from './components/header/header';
+
 
 const App: React.FC = () => (
   <BrowserRouter>
+    <Header />
     <Routes>
       <Route path={AppRoutes.Root} element={<MainPage />} />
       <Route path={AppRoutes.Login} element={<LoginPage />} />
@@ -23,6 +26,7 @@ const App: React.FC = () => (
       />
       <Route path={AppRoutes.Offer} element={<OfferPage />} />
       <Route path={AppRoutes.NotFound} element={<NotFoundPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   </BrowserRouter>
 );

@@ -2,12 +2,12 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectAuthorizationStatus, selectUser } from '../../store/selectors';
-import { logout } from '../../store/reducer';
 import { AppRoutes } from '../../constants';
-
+import { logoutAndReset } from '../../store/thunks';
+import type { AppDispatch } from '../../store/index';
 
 const Header: React.FC = React.memo(() => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const authorizationStatus = useSelector(selectAuthorizationStatus);
   const user = useSelector(selectUser);
@@ -19,18 +19,16 @@ const Header: React.FC = React.memo(() => {
 
   type RootState = {
     offers: Offer[];
+    favorites: Offer[];
   };
 
   const favoriteCount = useSelector((state: RootState) =>
-    Array.isArray(state.offers)
-      ? state.offers.filter((offer) => offer.isFavorite).length
-      : 0
+    Array.isArray(state.favorites) ? state.favorites.length : 0
   );
 
-  const handleLogout = (e: React.MouseEvent) => {
-    e.preventDefault();
-    localStorage.removeItem('six-cities-token');
-    dispatch(logout());
+  const handleLogout = (event: React.MouseEvent) => {
+    event.preventDefault();
+    dispatch(logoutAndReset());
     navigate(AppRoutes.Login);
   };
 

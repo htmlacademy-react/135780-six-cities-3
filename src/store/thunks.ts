@@ -1,10 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState, AppThunkExtra } from './index';
-import { setAuthorizationStatus, setUser } from './reducer';
-import { OfferData } from '../components/OfferList/offer-list';
+import { setAuthorizationStatus, setUser, logout } from './reducer';
+import { OfferData } from '../components/offerlist/offer-list';
 import { ReviewData } from '../types/review';
-import axios from 'axios';
-
 
 type UserResponse = {
   name: string;
@@ -67,26 +65,18 @@ export const fetchOffer = createAsyncThunk<
   }
 );
 
-export const login = createAsyncThunk<
+export const logoutAndReset = createAsyncThunk<
   void,
-  { email: string; password: string },
+  void,
   { extra: AppThunkExtra; state: RootState }
 >(
-  'user/login',
-  async ({ email, password }, { extra: api, dispatch }) => {
-    try {
-      const { data } = await api.post<AuthInfo>('/login', { email, password });
-      localStorage.setItem('six-cities-token', data.token);
-      dispatch(setAuthorizationStatus('AUTH'));
-      dispatch(setUser(data));
-    } catch (error) {
-      dispatch(setAuthorizationStatus('NO_AUTH'));
-      dispatch(setUser(null));
-      throw error;
-    }
+  'user/logoutAndReset',
+  async (_, { dispatch }) => {
+    localStorage.removeItem('six-cities-token');
+    dispatch(logout());
+    await dispatch(fetchOffers()); // обязательно await!
   }
 );
-
 
 // Получение предложений неподалёку
 export const fetchNearOffers = createAsyncThunk<
@@ -135,25 +125,69 @@ export const postComment = createAsyncThunk<
   { state: RootState; extra: AppThunkExtra }
 >(
   'comments/postComment',
-  async ({ offerId, data }, { dispatch, rejectWithValue }) => {
+  async ({ offerId, data }, { dispatch, rejectWithValue, extra: api }) => {
     try {
-      const token = localStorage.getItem('six-cities-token');
-      await axios.post(
-        `https://15.design.htmlacademy.pro/six-cities/comments/${offerId}`,
-        data,
-        {
-          headers: {
-            'X-Token': token,
-          },
-        }
+      await api.post(
+        `/comments/${offerId}`,
+        data
       );
-      // После успешной отправки — обновить список комментариев
       dispatch(fetchComments(offerId));
     } catch (error: unknown) {
-      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
-        return rejectWithValue(error.response.data.message || 'Ошибка отправки комментария');
-      }
-      return rejectWithValue('Ошибка отправки комментария');
+      return rejectWithValue(
+        typeof error === 'object' && error !== null && 'response' in error
+          ? (error as { response: { data?: { message?: string } } }).response.data?.message || 'Ошибка отправки комментария'
+          : 'Ошибка отправки комментария'
+      );
     }
+  }
+);
+
+export const fetchFavorites = createAsyncThunk<
+  OfferData[],
+  void,
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'offers/fetchFavorites',
+  async (_arg, { extra: api, rejectWithValue }) => {
+    try {
+      const { data } = await api.get<OfferData[]>('/favorite');
+      return data;
+    } catch (error) {
+      return rejectWithValue('Не удалось загрузить избранное');
+    }
+  }
+);
+
+export const login = createAsyncThunk<
+  void,
+  { email: string; password: string },
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'user/login',
+  async ({ email, password }, { extra: api, dispatch }) => {
+    try {
+      const { data } = await api.post<AuthInfo>('/login', { email, password });
+      localStorage.setItem('six-cities-token', data.token);
+      dispatch(setAuthorizationStatus('AUTH'));
+      dispatch(setUser(data));
+      dispatch(fetchOffers());
+      dispatch(fetchFavorites());
+    } catch (error) {
+      dispatch(setAuthorizationStatus('NO_AUTH'));
+      dispatch(setUser(null));
+      throw error;
+    }
+  }
+);
+
+export const toggleFavoriteOnServer = createAsyncThunk<
+  string,
+  { offerId: string; status: 0 | 1 },
+  { extra: AppThunkExtra; state: RootState }
+>(
+  'offers/toggleFavoriteOnServer',
+  async ({ offerId, status }, { extra: api }) => {
+    await api.post(`/favorite/${offerId}/${status}`);
+    return offerId;
   }
 );

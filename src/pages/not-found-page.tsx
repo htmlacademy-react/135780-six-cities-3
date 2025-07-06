@@ -1,13 +1,12 @@
 import { AppRoutes } from '../constants';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../components/Header/header';
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { resetOffer } from '../store/reducer';
+import type { AppDispatch } from '../store';
 
 const NotFoundPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(resetOffer());
@@ -15,7 +14,6 @@ const NotFoundPage: React.FC = () => {
 
   return (
     <div className="page page--gray page--not-found">
-      <Header />
 
       <main className="page__main page__main--not-found">
         <div className="container">

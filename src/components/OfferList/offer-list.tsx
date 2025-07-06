@@ -1,5 +1,5 @@
 import React from 'react';
-import OfferCard from '../OfferCard/offer-card';
+import OfferCard from '../offercard/offer-card';
 
 export type OfferData = {
    id: string;
@@ -40,16 +40,18 @@ type OfferListProps = {
   onCardHover?: (id: string | null) => void;
   className?: string;
   isFavorites?: boolean;
+  isNearPlaces?: boolean;
 };
 
-const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className, isFavorites }) => (
+const OfferList: React.FC<OfferListProps> = ({ offers, onCardHover, className, isFavorites, isNearPlaces }) => (
   <div className={`offer-list ${className || ''}`}>
     {offers.map((offer) => (
       <OfferCard
         key={offer.id}
         offer={offer}
-        onHover={onCardHover || (() => {})}
+        onHover={onCardHover}
         isFavorites={isFavorites}
+        isNearPlaces={isNearPlaces}
       />
     ))}
   </div>

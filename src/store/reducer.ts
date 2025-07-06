@@ -1,5 +1,5 @@
-import { OfferData } from '../components/OfferList/offer-list';
-import { fetchOffers, fetchOffer, fetchNearOffers, fetchComments } from './thunks';
+import { OfferData } from '../components/offerlist/offer-list';
+import { fetchOffers, fetchOffer, fetchNearOffers, fetchComments, toggleFavoriteOnServer, fetchFavorites } from './thunks';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ReviewData } from '../types/review';
 
@@ -28,6 +28,9 @@ export type State = {
   comments: ReviewData[];
   commentsLoading: boolean;
   commentsError: string | null;
+  favorites: OfferData[];
+  favoritesLoading: boolean;
+  favoritesError: string | null;
 };
 
 // Начальное состояние
@@ -47,6 +50,9 @@ export const initialState: State = {
   comments: [],
   commentsLoading: false,
   commentsError: null,
+  favorites: [],
+  favoritesLoading: false,
+  favoritesError: null,
 };
 
 const mainSlice = createSlice({
@@ -54,9 +60,9 @@ const mainSlice = createSlice({
   initialState,
   reducers: {
     toggleFavorite(state, action: PayloadAction<string>) {
-      const offer = state.offers.find((o) => o.id === action.payload);
-      if (offer) {
-        offer.isFavorite = !offer.isFavorite;
+      const offerItem = state.offers.find((item) => item.id === action.payload);
+      if (offerItem) {
+        offerItem.isFavorite = !offerItem.isFavorite;
       }
       if (state.currentOffer && state.currentOffer.id === action.payload) {
         state.currentOffer.isFavorite = !state.currentOffer.isFavorite;
@@ -79,10 +85,59 @@ const mainSlice = createSlice({
     logout(state) {
       state.authorizationStatus = 'NO_AUTH';
       state.user = null;
+      state.favorites = [];
+      state.offers = [];
     },
+
   },
+
   extraReducers: (builder) => {
     builder
+      .addCase(fetchFavorites.pending, (state) => {
+        state.favoritesLoading = true;
+        state.favoritesError = null;
+      })
+
+      .addCase(fetchFavorites.rejected, (state, action) => {
+        state.favoritesLoading = false;
+        state.favoritesError = action.payload as string;
+      })
+      .addCase(toggleFavoriteOnServer.fulfilled, (state, action) => {
+        const offerId = action.payload;
+        const offerItem = state.offers.find((offer) => offer.id === offerId);
+        if (offerItem) {
+          offerItem.isFavorite = !offerItem.isFavorite;
+          if (offerItem.isFavorite) {
+            if (!state.favorites.find((favoriteOffer) => favoriteOffer.id === offerId)) {
+              state.favorites.push({ ...offerItem });
+            }
+          } else {
+            state.favorites = state.favorites.filter((favoriteOffer) => favoriteOffer.id !== offerId);
+          }
+        } else {
+          const favoriteOffer = state.favorites.find((favorite) => favorite.id === offerId);
+          if (favoriteOffer) {
+            favoriteOffer.isFavorite = !favoriteOffer.isFavorite;
+            if (!favoriteOffer.isFavorite) {
+              state.favorites = state.favorites.filter((favorite) => favorite.id !== offerId);
+            }
+          }
+        }
+        if (state.currentOffer && state.currentOffer.id === offerId) {
+          state.currentOffer.isFavorite = offerItem ? offerItem.isFavorite : false;
+        }
+      })
+      .addCase(fetchFavorites.fulfilled, (state, action) => {
+        state.favoritesLoading = false;
+        state.favorites = action.payload;
+        const favoriteOfferIds = new Set(action.payload.map((favoriteOffer) => favoriteOffer.id));
+        state.offers.forEach((offerItem) => {
+          offerItem.isFavorite = favoriteOfferIds.has(offerItem.id);
+        });
+        if (state.currentOffer) {
+          state.currentOffer.isFavorite = favoriteOfferIds.has(state.currentOffer.id);
+        }
+      })
       .addCase(fetchOffers.pending, (state) => {
         state.offersLoading = true;
         state.offersError = null;
@@ -125,6 +180,7 @@ const mainSlice = createSlice({
       })
       .addCase(fetchComments.fulfilled, (state, action: PayloadAction<ReviewData[]>) => {
         state.commentsLoading = false;
+        state.commentsError = null;
         state.comments = action.payload;
       })
       .addCase(fetchComments.rejected, (state, action) => {

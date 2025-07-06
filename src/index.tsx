@@ -3,11 +3,17 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import { fetchOffers, checkAuth } from './store/thunks';
+import { fetchOffers, checkAuth, fetchFavorites } from './store/thunks';
 
+// Сначала грузим офферы
 store.dispatch(fetchOffers());
-store.dispatch(checkAuth());
-store.dispatch(fetchOffers());
+
+// Проверяем авторизацию и, если авторизован, грузим избранное
+store.dispatch(checkAuth()).then(() => {
+  if (store.getState().authorizationStatus === 'AUTH') {
+    store.dispatch(fetchFavorites());
+  }
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
