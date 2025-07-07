@@ -64,15 +64,6 @@ const mainSlice = createSlice({
   name: 'main',
   initialState,
   reducers: {
-    toggleFavorite(state, action: PayloadAction<string>) {
-      const offerItem = state.offers.find((item) => item.id === action.payload);
-      if (offerItem) {
-        offerItem.isFavorite = !offerItem.isFavorite;
-      }
-      if (state.currentOffer && state.currentOffer.id === action.payload) {
-        state.currentOffer.isFavorite = !state.currentOffer.isFavorite;
-      }
-    },
     resetOffer(state) {
       state.currentOffer = null;
       state.currentOfferError = null;
@@ -208,5 +199,5 @@ const mainSlice = createSlice({
   },
 });
 
-export const { toggleFavorite, resetOffer, setCity, setAuthorizationStatus, setUser, logout } = mainSlice.actions;
+export const { resetOffer, setCity, setAuthorizationStatus, setUser, logout } = mainSlice.actions;
 export default mainSlice.reducer;
