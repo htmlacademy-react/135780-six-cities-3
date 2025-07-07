@@ -130,7 +130,7 @@ export const postComment = createAsyncThunk<
       const resp = await api.post<Comment[]>(
         `/comments/${offerId}`,
         data,
-        { validateStatus: (s) => s >= 200 && s < 300 }
+
       );
       dispatch(fetchComments(offerId));
       return resp.data;

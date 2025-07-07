@@ -1,4 +1,5 @@
 import Review from '../review/review';
+import { MAX_COMMENTS } from '../../constants';
 
 export type ReviewData = {
   id: string;
@@ -13,8 +14,6 @@ type ReviewListProps = {
   comments: ReviewData[];
   totalCommentsCount: number;
 };
-
-const MAX_COMMENTS = 10;
 
 
 function sortByDate(reviews: ReviewData[]) {

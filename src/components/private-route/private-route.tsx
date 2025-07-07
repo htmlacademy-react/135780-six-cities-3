@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import { AppRoutes } from '../../constants';
 
 type PrivateRouteProps = {
   children: JSX.Element;
@@ -14,7 +15,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   }
   return authorizationStatus === 'AUTH'
     ? children
-    : <Navigate to="/login" />;
+    : <Navigate to={AppRoutes.Login} />;
 };
 
 export default PrivateRoute;
